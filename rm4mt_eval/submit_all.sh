@@ -4,7 +4,6 @@ DATASETS=(
     # "APE-QUEST"
     # "CAMT"
     "DRT-Gutenberg"
-    # "WMT23-Biomedical"
     # "WMT23-Biomedical-Doc"
     # "WMT23-Biomedical-Sentence"
     # "WMT24-Biomedical"
@@ -13,15 +12,18 @@ DATASETS=(
 
 
 MODELS=(
-    "qwen3-0.6b"
-    # "qwen3-1.7b"
+    # "qwen3-0.6b"
+    "qwen3-1.7b"
     # "qwen3-8b"
     # "qwen3-14b"
     # "qwen3-32b"
 )
 
 THINKING_BUDGETS=(
-    # 0
+    0
+    100
+    200
+    300
     500
     # 1000
     # 1500
