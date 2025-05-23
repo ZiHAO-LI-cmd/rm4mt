@@ -29,7 +29,7 @@ def compute_comet_scores(model, items, use_ref=True):
     return output.scores
 
 
-def main(input_root, output_root):
+def main(input_root, output_root, overwrite=False):
     comet_model_path = download_model("Unbabel/wmt22-comet-da")
     comet_model = load_from_checkpoint(comet_model_path)
 
@@ -39,6 +39,14 @@ def main(input_root, output_root):
     jsonl_files = glob(os.path.join(input_root, "*", "budget_*", "*.jsonl"))
 
     for input_path in tqdm(jsonl_files, desc="Processing files"):
+        relative_path = os.path.relpath(input_path, input_root)
+        output_path = os.path.join(output_root, relative_path)
+        
+        # Skip if output file exists and overwrite is False
+        if os.path.exists(output_path) and not overwrite:
+            print(f"⏭️ Skipping {input_path} (already processed)")
+            continue
+
         data = load_jsonl(input_path)
 
         comet_scores = compute_comet_scores(comet_model, data, use_ref=True)
@@ -47,9 +55,6 @@ def main(input_root, output_root):
         for i in range(len(data)):
             data[i]["comet_score"] = comet_scores[i]
             data[i]["comet_kiwi_score"] = cometkiwi_scores[i]
-
-        relative_path = os.path.relpath(input_path, input_root)
-        output_path = os.path.join(output_root, relative_path)
 
         save_jsonl(data, output_path)
         print(f"✔ {input_path} → {output_path}")
@@ -63,6 +68,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_root", required=True, help="Path to write scored data"
     )
+    parser.add_argument(
+        "--overwrite", action="store_true", 
+        help="Overwrite existing output files (default: skip already processed files)"
+    )
     args = parser.parse_args()
 
-    main(args.input_root, args.output_root)
+    main(args.input_root, args.output_root, args.overwrite)

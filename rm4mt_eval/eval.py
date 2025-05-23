@@ -36,10 +36,20 @@ def translate_dataset(input_dir, output_dir, model_name, base_url, api_key, extr
         input_file = os.path.join(input_dir, filename)
         output_file = os.path.join(output_dir, filename)
 
+        already_translated = set()
+        if os.path.exists(output_file):
+            with open(output_file, "r", encoding="utf-8") as fdone:
+                for line in fdone:
+                    try:
+                        obj = json.loads(line)
+                        already_translated.add(obj.get("src_text", "").strip())
+                    except Exception:
+                        continue
+
         with open(input_file, "r", encoding="utf-8") as fin:
             total_lines = sum(1 for _ in fin)
         with open(input_file, "r", encoding="utf-8") as fin, open(
-            output_file, "w", encoding="utf-8"
+            output_file, "a", encoding="utf-8"
         ) as fout:
             progress_bar = tqdm(
                 fin, total=total_lines, desc=f"Translating {filename}", unit="examples"
@@ -48,7 +58,7 @@ def translate_dataset(input_dir, output_dir, model_name, base_url, api_key, extr
             for line in progress_bar:
                 item = json.loads(line)
                 src_text = item.get(f"{src_lang}_text", "").strip()
-                if not src_text:
+                if not src_text or src_text in already_translated:
                     continue
 
                 src_lang_name = LANG_CODE_TO_NAME[src_lang]

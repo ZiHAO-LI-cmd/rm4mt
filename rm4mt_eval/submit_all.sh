@@ -14,18 +14,18 @@ DATASETS=(
 MODELS=(
     # "qwen3-0.6b"
     # "qwen3-1.7b"
-    "qwen3-4b"
-    "qwen3-8b"
-    "qwen3-14b"
-    # "qwen3-32b"
+    # "qwen3-4b"
+    # "qwen3-8b"
+    # "qwen3-14b"
+    "qwen3-32b"
 )
 
 THINKING_BUDGETS=(
     0
     100
-    200
-    300
-    400
+    # 200
+    # 300
+    # 400
     500
     # 1000
     # 1500
