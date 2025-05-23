@@ -64,35 +64,39 @@ def translate_dataset(input_dir, output_dir, model_name, base_url, api_key, extr
                         extra_body=extra_body,
                         stream=True,
                     )
+
+                    reasoning_content = ""
+                    answer_content = ""
+                    for chunk in completion:
+                        if not chunk.choices:
+                            continue
+                        delta = chunk.choices[0].delta
+                        if (
+                            hasattr(delta, "reasoning_content")
+                            and delta.reasoning_content
+                        ):
+                            reasoning_content += delta.reasoning_content
+                        if hasattr(delta, "content") and delta.content:
+                            answer_content += delta.content
+
+                    output = {
+                        "model": model_name,
+                        "thinking_budget": extra_body.get("thinking_budget", 0),
+                        "src_lang": src_lang,
+                        "tgt_lang": tgt_lang,
+                        "src_text": src_text,
+                        "tgt_text": item.get(f"{tgt_lang}_text", "").strip(),
+                        "hyp_text": answer_content.strip(),
+                        "reasoning": reasoning_content.strip(),
+                    }
+                    fout.write(json.dumps(output, ensure_ascii=False) + "\n")
+
                 except Exception as e:
                     print("=" * 30)
                     print(f"Skipping due to error: {e}")
                     print(f"src_text: {src_text}")
                     print("=" * 30)
                     continue
-
-                reasoning_content = ""
-                answer_content = ""
-                for chunk in completion:
-                    if not chunk.choices:
-                        continue
-                    delta = chunk.choices[0].delta
-                    if hasattr(delta, "reasoning_content") and delta.reasoning_content:
-                        reasoning_content += delta.reasoning_content
-                    if hasattr(delta, "content") and delta.content:
-                        answer_content += delta.content
-
-                output = {
-                    "model": model_name,
-                    "thinking_budget": extra_body.get("thinking_budget", 0),
-                    "src_lang": src_lang,
-                    "tgt_lang": tgt_lang,
-                    "src_text": src_text,
-                    "tgt_text": item.get(f"{tgt_lang}_text", "").strip(),
-                    "hyp_text": answer_content.strip(),
-                    "reasoning": reasoning_content.strip(),
-                }
-                fout.write(json.dumps(output, ensure_ascii=False) + "\n")
 
         print(f"✔ Translated {filename} → saved to {output_file}")
 
