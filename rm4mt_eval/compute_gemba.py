@@ -60,16 +60,25 @@ def build_prompt(item, use_ref):
 def compute_gemba_score(client, item: Dict[str, Any], use_ref: bool) -> Any:
     """Compute GEMBA score for a single item."""
     prompt = build_prompt(item, use_ref)
-    response = client.models.generate_content(
-        model="gemini-2.5-flash-preview-05-20",
-        contents=prompt,
-        config={"seed": 42, "stopSequences": ["\n"]},
-    )
-    match = re.search(r"\b(\d{1,3})\b", response.text)
-    if match:
-        return int(match.group(1))
-    else:
-        return response.text
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-preview-05-20",
+            contents=prompt,
+            config={"seed": 42, "stopSequences": ["\n"]},
+        )
+
+        # Check if response.text exists and is not None
+        if hasattr(response, "text") and response.text is not None:
+            match = re.search(r"\b(\d{1,3})\b", response.text)
+            if match:
+                return int(match.group(1))
+            else:
+                return "No score found in response: " + response.text
+        else:
+            return "Empty response"
+    except Exception as e:
+        # Return error message instead of crashing
+        return f"Error: {str(e)}"
 
 
 def compute_gemba_scores(
@@ -107,30 +116,57 @@ def main(
     for input_path in tqdm(jsonl_files, desc="Processing files"):
         relative_path = os.path.relpath(input_path, input_root)
         output_path = os.path.join(output_root, relative_path)
+        temp_output_path = output_path + ".temp"
 
         # Skip if output file exists and overwrite is False
         if os.path.exists(output_path) and not overwrite:
-            print(f"⏭️ Skipping {input_path} (already processed)")
+            print(f"Skipping {input_path} (already processed)")
             continue
 
-        data = load_jsonl(input_path)
+        # Check if temp file exists, load it if it does
+        if os.path.exists(temp_output_path):
+            data = load_jsonl(temp_output_path)
+            print(f"Resuming from temporary file: {temp_output_path}")
+        else:
+            data = load_jsonl(input_path)
 
-        # Process data in batches to avoid overwhelming the API
+        # Track which items have been processed
         for i in range(0, len(data), batch_size):
             batch = data[i : i + batch_size]
 
-            gemba_scores = compute_gemba_scores(
-                client, batch, use_ref=True, max_workers=max_workers
-            )
-            gemba_noref_scores = compute_gemba_scores(
-                client, batch, use_ref=False, max_workers=max_workers
+            # Check which items in the batch need processing
+            items_needing_gemba = [item for item in batch if "gemba_score" not in item]
+            items_needing_gemba_noref = [
+                item for item in batch if "gemba_noref_score" not in item
+            ]
+
+            # Process items that need gemba scores
+            if items_needing_gemba:
+                gemba_scores = compute_gemba_scores(
+                    client, items_needing_gemba, use_ref=True, max_workers=max_workers
+                )
+                for item, score in zip(items_needing_gemba, gemba_scores):
+                    item["gemba_score"] = score
+
+            # Process items that need gemba_noref scores
+            if items_needing_gemba_noref:
+                gemba_noref_scores = compute_gemba_scores(
+                    client,
+                    items_needing_gemba_noref,
+                    use_ref=False,
+                    max_workers=max_workers,
+                )
+                for item, score in zip(items_needing_gemba_noref, gemba_noref_scores):
+                    item["gemba_noref_score"] = score
+
+            # Save intermediate results after each batch
+            save_jsonl(data, temp_output_path)
+            print(
+                f"Saved progress to {temp_output_path} (batch {i//batch_size + 1}/{(len(data) + batch_size - 1)//batch_size})"
             )
 
-            for j in range(len(batch)):
-                batch[j]["gemba_score"] = gemba_scores[j]
-                batch[j]["gemba_noref_score"] = gemba_noref_scores[j]
-
-        save_jsonl(data, output_path)
+        # Once all batches are processed, rename temp file to final output
+        os.rename(temp_output_path, output_path)
         print(f"✔ {input_path} → {output_path}")
 
 
@@ -161,4 +197,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    main(args.input_root, args.output_root, args.overwrite)
+    main(
+        args.input_root,
+        args.output_root,
+        args.overwrite,
+        args.batch_size,
+        args.max_workers,
+    )
