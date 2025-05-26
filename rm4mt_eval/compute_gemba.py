@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import re
 import argparse
 import concurrent.futures
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from functools import partial
 
 load_dotenv()
@@ -62,7 +62,8 @@ def compute_gemba_score(client, item: Dict[str, Any], use_ref: bool) -> Any:
     prompt = build_prompt(item, use_ref)
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash-preview-05-20",
+            # model="gemini-2.5-flash-preview-05-20",
+            model="gemini-2.0-flash",
             contents=prompt,
             config={"seed": 42, "stopSequences": ["\n"]},
         )
