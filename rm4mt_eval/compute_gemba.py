@@ -77,7 +77,17 @@ def compute_gemba_score(client, item: Dict[str, Any], use_ref: bool) -> Any:
         else:
             return "Empty response"
     except Exception as e:
-        # Return error message instead of crashing
+        error_message = str(e)
+        # Check if this is a quota/rate limit error
+        if "429" in error_message and "RESOURCE_EXHAUSTED" in error_message:
+            print("\n\nERROR: Hit Gemini API quota limit. Terminating program.")
+            print(f"Error details: {error_message}")
+            print("\nPlease try again later when your quota resets.")
+            # Exit the program with an error code
+            import sys
+
+            sys.exit(1)
+        # Return error message for other types of errors
         return f"Error: {str(e)}"
 
 

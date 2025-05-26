@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=GEMBA-DRT-Gutenberg-Qwen3
+#SBATCH --job-name=GEMBA-DRT-Gutenberg-Qwen3-14B
 #SBATCH --output=/scratch/project_462000941/members/zihao/slurmlog/gemba/%x_%j.out
 #SBATCH --error=/scratch/project_462000941/members/zihao/slurmlog/gemba/%x_%j.err
 #SBATCH --partition=small
@@ -22,11 +22,11 @@ conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
 
 SCRIPT="compute_gemba.py"
 
-INPUT_ROOT="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/DRT-Gutenberg"
+INPUT_ROOT="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_4_test/DRT-Gutenberg"
 OUTPUT_ROOT="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gemba/DRT-Gutenberg"
 
 
-MAX_WORKERS=20
+MAX_WORKERS=5
 BATCH_SIZE=100
 
 # Set to true to force reprocessing of files, or false to skip already processed files
