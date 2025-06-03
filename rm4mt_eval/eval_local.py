@@ -2,7 +2,7 @@ import os
 import json
 import argparse
 import torch
-from transformers import LogitsProcessor, AutoTokenizer, pipeline
+from transformers import LogitsProcessor, AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 
 LANG_CODE_TO_NAME = {
@@ -171,6 +171,10 @@ def translate_dataset(
         device = 0 if torch.cuda.is_available() else -1
         print(f"Using device: {'GPU' if device == 0 else 'CPU'}")
 
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name, torch_dtype="auto", device_map="auto"
+    )
+
     os.makedirs(output_dir, exist_ok=True)
 
     for filename in os.listdir(input_dir):
@@ -210,38 +214,49 @@ def translate_dataset(
                 src_lang_name = LANG_CODE_TO_NAME[src_lang]
                 tgt_lang_name = LANG_CODE_TO_NAME[tgt_lang]
                 prompt = f"Translate the following text from {src_lang_name} to {tgt_lang_name}\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
-
                 messages = [{"role": "user", "content": prompt}]
 
                 try:
-                    # Create processor with thinking budget
-                    processor = ThinkingTokenBudgetProcessor(
-                        tokenizer, max_thinking_tokens=thinking_budget
-                    )
-
-                    # Create pipeline with device_map or device
-                    pipeline_kwargs = {
-                        "task": "text-generation",
-                        "model": model_name,
-                        "tokenizer": tokenizer,
-                        "max_new_tokens": max_new_tokens,
-                        "temperature": temperature,
-                        "top_p": top_p,
-                        "do_sample": True,
-                        "logits_processor": [processor],
-                        "torch_dtype": "auto",
-                    }
-
-                    if device_map:
-                        pipeline_kwargs["device_map"] = device_map
+                    if thinking_budget == 0:
+                        text = tokenizer.apply_chat_template(
+                            messages,
+                            tokenize=False,
+                            add_generation_prompt=True,
+                            enable_thinking=False,
+                        )
+                        model_inputs = tokenizer([text], return_tensors="pt").to(
+                            model.device
+                        )
+                        generated_ids = model.generate(
+                            **model_inputs,
+                            max_new_tokens=max_new_tokens,
+                            temperature=temperature,
+                            top_p=top_p,
+                        )
                     else:
-                        pipeline_kwargs["device"] = device
+                        text = tokenizer.apply_chat_template(
+                            messages,
+                            tokenize=False,
+                            add_generation_prompt=True,
+                            enable_thinking=True,
+                        )
+                        model_inputs = tokenizer([text], return_tensors="pt").to(
+                            model.device
+                        )
+                        processor = ThinkingTokenBudgetProcessor(
+                            tokenizer, max_thinking_tokens=thinking_budget
+                        )
+                        generated_ids = model.generate(
+                            **model_inputs,
+                            max_new_tokens=max_new_tokens,
+                            temperature=temperature,
+                            top_p=top_p,
+                            logits_processor=[processor],
+                        )
 
-                    pipe = pipeline(**pipeline_kwargs)
-
-                    # Generate response
-                    result = pipe(messages)
-                    generated_text = result[0]["generated_text"][-1]["content"]
+                    generated_text = tokenizer.decode(
+                        generated_ids[0], skip_special_tokens=True
+                    )
 
                     # Extract thinking and response
                     reasoning_content, answer_content = extract_thinking_and_response(
@@ -254,9 +269,10 @@ def translate_dataset(
                         "src_lang": src_lang,
                         "tgt_lang": tgt_lang,
                         "src_text": src_text,
-                        "tgt_text": item.get(f"{tgt_lang}_text", "").strip(),
-                        "hyp_text": answer_content.strip(),
-                        "reasoning": reasoning_content.strip(),
+                        "tgt_text": item.get(f"{tgt_lang}_text", ""),
+                        "hyp_text": answer_content,
+                        "reasoning": reasoning_content,
+                        "all_generated_text": generated_text,
                     }
                     fout.write(json.dumps(output, ensure_ascii=False) + "\n")
                     fout.flush()  # Ensure data is written immediately
