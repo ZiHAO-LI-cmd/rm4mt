@@ -150,7 +150,6 @@ def translate_dataset(
     max_new_tokens,
     seed,
     device_map,
-    batch_size=8,
 ):
     """
     Translate dataset using local model inference
@@ -169,33 +168,8 @@ def translate_dataset(
         print(f"Using device_map: {device_map}")
         device = None  # device should be None when using device_map
     else:
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        device = 0 if torch.cuda.is_available() else -1
         print(f"Using device: {'GPU' if device == 0 else 'CPU'}")
-
-    # Create processor with thinking budget
-    processor = ThinkingTokenBudgetProcessor(
-        tokenizer, max_thinking_tokens=thinking_budget
-    )
-
-    # Create pipeline with device_map or device
-    pipeline_kwargs = {
-        "task": "text-generation",
-        "model": model_name,
-        "tokenizer": tokenizer,
-        "max_new_tokens": max_new_tokens,
-        "temperature": temperature,
-        "top_p": top_p,
-        "do_sample": True,
-        "logits_processor": [processor],
-        "torch_dtype": "auto",
-    }
-
-    if device_map:
-        pipeline_kwargs["device_map"] = device_map
-    else:
-        pipeline_kwargs["device"] = device
-
-    pipe = pipeline(**pipeline_kwargs)
 
     os.makedirs(output_dir, exist_ok=True)
 
@@ -217,21 +191,15 @@ def translate_dataset(
                     except Exception:
                         continue
 
-        # with open(input_file, "r", encoding="utf-8") as fin:
-        #     total_lines = sum(1 for _ in fin)
+        with open(input_file, "r", encoding="utf-8") as fin:
+            total_lines = sum(1 for _ in fin)
 
         with open(input_file, "r", encoding="utf-8") as fin, open(
             output_file, "a", encoding="utf-8"
         ) as fout:
             progress_bar = tqdm(
-                fin,
-                total=sum(1 for _ in fin),
-                desc=f"Translating {filename}",
-                unit="examples",
+                fin, total=total_lines, desc=f"Translating {filename}", unit="examples"
             )
-
-            batch_prompts = []
-            batch_items = []
 
             for line in progress_bar:
                 item = json.loads(line)
@@ -246,6 +214,31 @@ def translate_dataset(
                 messages = [{"role": "user", "content": prompt}]
 
                 try:
+                    # Create processor with thinking budget
+                    processor = ThinkingTokenBudgetProcessor(
+                        tokenizer, max_thinking_tokens=thinking_budget
+                    )
+
+                    # Create pipeline with device_map or device
+                    pipeline_kwargs = {
+                        "task": "text-generation",
+                        "model": model_name,
+                        "tokenizer": tokenizer,
+                        "max_new_tokens": max_new_tokens,
+                        "temperature": temperature,
+                        "top_p": top_p,
+                        "do_sample": True,
+                        "logits_processor": [processor],
+                        "torch_dtype": "auto",
+                    }
+
+                    if device_map:
+                        pipeline_kwargs["device_map"] = device_map
+                    else:
+                        pipeline_kwargs["device"] = device
+
+                    pipe = pipeline(**pipeline_kwargs)
+
                     # Generate response
                     result = pipe(messages)
                     generated_text = result[0]["generated_text"][-1]["content"]
