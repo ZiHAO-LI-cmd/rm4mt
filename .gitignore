@@ -3,6 +3,7 @@
 /rm4mt_translated_4_test
 /rm4mt_translated_with_comet
 /rm4mt_translated_with_gemba
+/rm4mt_translated_api
 /rm4mt_eval/tmp_jobs
 .env
 /rm4mt_eval/test.py
