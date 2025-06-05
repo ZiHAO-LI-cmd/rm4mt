@@ -5,8 +5,8 @@
 #SBATCH --partition=small-g
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --gpus-per-task=2
-#SBATCH --time=4:00:00
+#SBATCH --gpus-per-task=1
+#SBATCH --time=24:00:00
 #SBATCH --account=project_462000675
 
 start_time=$(date +%s)
@@ -30,7 +30,7 @@ else
 fi
 
 DATASET_NAME=$(basename "$INPUT_DIR")
-OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_4_test/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
+OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
 
 SCRIPT="eval_local.py"
 
@@ -41,7 +41,7 @@ python "$SCRIPT" \
     --model "$MODEL_NAME" \
     --temperature "$TEMPERATURE" \
     --top_p "$TOP_P" \
-    --max_new_tokens 1500 \
+    --max_new_tokens 12000 \
     --thinking_budget "$THINKING_BUDGET" \
     --seed "$SEED" \
     --device_map "auto"
