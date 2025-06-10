@@ -12,27 +12,22 @@ DATASETS=(
 
 
 MODELS=(
-    # "qwen3-0.6b"
-    # "qwen3-1.7b"
-    # "qwen3-4b"
-    # "qwen3-8b"
-    # "qwen3-14b"
-    "qwen3-32b"
+    "gemini-2.5-flash-preview-05-20"
 )
 
 THINKING_BUDGETS=(
-    0
+    # 0
     100
     # 200
     # 300
     # 400
-    500
+    # 500
     # 1000
     # 1500
     # 2000
 )
 
-TEMPLATE="eval_api_qwen.sh"
+TEMPLATE="eval_api_gemini.sh"
 
 TMP_SCRIPT_DIR="./tmp_jobs"
 mkdir -p "$TMP_SCRIPT_DIR"
@@ -48,7 +43,7 @@ for dataset in "${DATASETS[@]}"; do
 
       sed \
         -e "s|^#SBATCH --job-name=.*|#SBATCH --job-name=${jobname}|" \
-        -e "s|^INPUT_DIR=.*|INPUT_DIR=\"/scratch/project_462000941/members/zihao/rm4mt/rm4mt_dataset/processed/${dataset}\"|" \
+        -e "s|^INPUT_DIR=.*|INPUT_DIR=\"/scratch/project_2008161/members/zihao/rm4mt/rm4mt_dataset/processed/${dataset}\"|" \
         -e "s|^MODEL_NAME=.*|MODEL_NAME=\"${model}\"|" \
         -e "s|^THINKING_BUDGET=.*|THINKING_BUDGET=${budget}|" \
         "$TEMPLATE" > "$tmp_script"

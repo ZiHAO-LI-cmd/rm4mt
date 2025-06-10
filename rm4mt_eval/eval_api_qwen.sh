@@ -36,7 +36,7 @@ fi
 DATASET_NAME=$(basename "$INPUT_DIR")
 OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
 
-SCRIPT="eval.py"
+SCRIPT="eval_api_qwen.py"
 
 echo "Translating files in $INPUT_DIR ..."
 python "$SCRIPT" \
