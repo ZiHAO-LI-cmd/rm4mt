@@ -37,7 +37,7 @@ def main(input_root, output_root, overwrite=False):
     cometkiwi_model = load_from_checkpoint(cometkiwi_model_path)
 
     jsonl_files = glob(os.path.join(input_root, "*", "budget_*", "*.jsonl"))
-
+    print(f"Found {len(jsonl_files)} files to proc")
     for input_path in tqdm(jsonl_files, desc="Processing files"):
         relative_path = os.path.relpath(input_path, input_root)
         output_path = os.path.join(output_root, relative_path)
