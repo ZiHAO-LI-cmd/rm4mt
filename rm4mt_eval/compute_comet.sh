@@ -21,25 +21,30 @@ source /flash/project_462000941/venv/rm4mt_env/bin/activate
 
 SCRIPT="compute_comet.py"
 
-INPUT_ROOT="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/DRT-Gutenberg"
+INPUT_ROOT="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_4_test/DRT-Gutenberg/Qwen"
 OUTPUT_ROOT="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_comet/DRT-Gutenberg"
 
 # Set to true to force reprocessing of files, or false to skip already processed files
-OVERWRITE=false
+OVERWRITE=true
 
 echo "Computing COMET scores for files in $INPUT_ROOT ..."
+
+GPU_COUNT=${SLURM_GPUS_PER_TASK}
+echo "Using $GPU_COUNT GPUs based on SLURM_GPUS_PER_TASK."
 
 if [ "$OVERWRITE" = true ]; then
     echo "Mode: Overwrite existing files"
     python "$SCRIPT" \
         --input_root "$INPUT_ROOT" \
         --output_root "$OUTPUT_ROOT" \
+        --gpu_num "$GPU_COUNT" \
         --overwrite
 else
     echo "Mode: Skip already processed files"
     python "$SCRIPT" \
         --input_root "$INPUT_ROOT" \
-        --output_root "$OUTPUT_ROOT"
+        --output_root "$OUTPUT_ROOT" \
+        --gpu_num "$GPU_COUNT"
 fi
 
 echo "Done: results saved to $OUTPUT_ROOT"
