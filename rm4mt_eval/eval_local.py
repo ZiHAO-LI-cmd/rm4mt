@@ -263,9 +263,15 @@ def translate_dataset(
                         generated_text
                     )
 
+                    # Calculate thinking length
+                    thinking_length = tokenizer(reasoning_content, return_length=True)[
+                        "length"
+                    ][0]
+
                     output = {
                         "model": model_name,
                         "thinking_budget": thinking_budget,
+                        "thinking_length": thinking_length,
                         "src_lang": src_lang,
                         "tgt_lang": tgt_lang,
                         "src_text": src_text,
