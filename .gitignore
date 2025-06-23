@@ -7,4 +7,5 @@
 /rm4mt_eval/tmp_jobs
 .env
 /rm4mt_eval/test.py
-# /rm4mt_eval/*.ipynb
+/rm4mt_eval/*.json
+/rm4mt_eval/*.xlsx
