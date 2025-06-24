@@ -62,7 +62,13 @@ def process_data(root_dir):
                                 }
 
                                 # Only include available metric keys
-                                for key in ['comet_score', 'comet_kiwi_score', 'gemba_score', 'gemba_noref_score']:
+                                for key in [
+                                    "comet_score",
+                                    "comet_kiwi_score",
+                                    "gemba_score",
+                                    "gemba_noref_score",
+                                    "thinking_length",
+                                ]:
                                     if key in record:
                                         try:
                                             data_entry[key] = float(record[key])
@@ -87,10 +93,13 @@ def prepare_data_for_upload(df):
         return {}
 
     available_metrics = set(df.columns)
+    print(f"Available metrics: {available_metrics}")
     if {'comet_score', 'comet_kiwi_score'}.issubset(available_metrics):
         metrics = ['comet_score', 'comet_kiwi_score']
     elif {'gemba_score', 'gemba_noref_score'}.issubset(available_metrics):
         metrics = ['gemba_score', 'gemba_noref_score']
+    elif {'thinking_length'}.issubset(available_metrics):
+        metrics = ["thinking_length"]
     else:
         print("No known metric columns found (e.g., comet_score or gemba_score).")
         return {}
