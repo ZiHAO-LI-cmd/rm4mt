@@ -19,6 +19,7 @@ source /flash/project_462000941/venv/rm4mt_env/bin/activate
 INPUT_DIR=""
 MODEL_NAME=""
 THINKING_BUDGET=
+ENABLE_WAIT_INSERTION=True
 SEED=42
 
 if [ "$THINKING_BUDGET" -eq 0 ]; then
@@ -30,7 +31,12 @@ else
 fi
 
 DATASET_NAME=$(basename "$INPUT_DIR")
-OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
+
+if [ "$ENABLE_WAIT_INSERTION" = "True" ]; then
+    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
+else
+    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
+fi
 
 SCRIPT="eval_local.py"
 
@@ -43,6 +49,7 @@ python "$SCRIPT" \
     --top_p "$TOP_P" \
     --max_new_tokens 12000 \
     --thinking_budget "$THINKING_BUDGET" \
+    --enable_wait_insertion "$ENABLE_WAIT_INSERTION" \
     --seed "$SEED" \
     --device_map "auto"
 

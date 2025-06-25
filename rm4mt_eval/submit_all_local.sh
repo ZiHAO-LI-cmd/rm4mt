@@ -1,13 +1,17 @@
 #!/bin/bash
 
 DATASETS=(
-  # "APE-QUEST"
   # "CAMT"
   # "DRT-Gutenberg"
   # "WMT23-Biomedical-Doc"
   # "WMT23-Biomedical-Sentence"
   # "WMT24-Biomedical"
   # "WMT-Literary"
+  # "LITEVAL-CORPUS"
+  # "CommonsenseMT-Contextless"
+  # "CommonsenseMT-Contextual"
+  # "CommonsenseMT-Lexical"
+  # "RTT"
 )
 
 MODELS=(
@@ -20,15 +24,15 @@ MODELS=(
 )
 
 THINKING_BUDGETS=(
-  0
-  100
-  200
-  300
-  400
-  500
-  1000
-  1500
-  2000
+  # 0
+  # 100
+  # 200
+  # 300
+  # 400
+  # 500
+  # 1000
+  # 1500
+  # 2000
 )
 
 TEMPLATE="eval_local.sh"

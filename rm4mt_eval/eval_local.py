@@ -28,9 +28,10 @@ class ThinkingTokenBudgetProcessor(LogitsProcessor):
     and then it will continue to generate the response.
     """
 
-    def __init__(self, tokenizer, max_thinking_tokens=None):
+    def __init__(self, tokenizer, max_thinking_tokens=None, enable_wait_insertion=True):
         self.tokenizer = tokenizer
         self.max_thinking_tokens = max_thinking_tokens
+        self.enable_wait_insertion = enable_wait_insertion  # 是否开启强制插入wait
 
         # 获取关键token的ID
         self.think_start_token = self.tokenizer.encode(
@@ -40,12 +41,16 @@ class ThinkingTokenBudgetProcessor(LogitsProcessor):
             "</think>", add_special_tokens=False
         )[0]
         self.nl_token = self.tokenizer.encode("\n", add_special_tokens=False)[0]
+        self.wait_token = self.tokenizer.encode("wait", add_special_tokens=False)[
+            0
+        ]  # 延长思考的token
 
         # 状态跟踪
         self.tokens_generated = 0
         self.thinking_tokens_count = 0
         self.in_thinking = False
         self.stopped_thinking = False
+        self.wait_inserted = False  # 跟踪是否已插入wait
         self.neg_inf = float("-inf")
 
     def __call__(
@@ -59,6 +64,7 @@ class ThinkingTokenBudgetProcessor(LogitsProcessor):
             if last_token == self.think_start_token:
                 self.in_thinking = True
                 self.thinking_tokens_count = 0
+                self.wait_inserted = False  # 重置wait状态
 
             # 检测思考结束
             elif last_token == self.think_end_token:
@@ -71,22 +77,6 @@ class ThinkingTokenBudgetProcessor(LogitsProcessor):
 
         self.tokens_generated += 1
 
-        # 处理 max_thinking_tokens=0 的情况：禁止思考
-        if self.max_thinking_tokens == 0 and not self.stopped_thinking:
-            # 如果在思考状态中，立即结束（不允许任何思考内容）
-            if self.in_thinking:
-                # 强制立即结束思考：换行 + </think>
-                if self.thinking_tokens_count == 0:
-                    # 第一个思考token：强制换行
-                    scores[:] = self.neg_inf
-                    scores[0][self.nl_token] = 0
-                else:
-                    # 第二个思考token：强制结束
-                    scores[:] = self.neg_inf
-                    scores[0][self.think_end_token] = 0
-                    self.stopped_thinking = True
-                return scores
-
         # 处理有限制的思考token数量
         if (
             self.max_thinking_tokens is not None
@@ -94,6 +84,21 @@ class ThinkingTokenBudgetProcessor(LogitsProcessor):
             and self.in_thinking
             and not self.stopped_thinking
         ):
+            # 如果开启了wait插入功能，且模型想要结束思考但还没达到最大tokens，且还没插入过wait，就插入wait
+            if (
+                self.enable_wait_insertion
+                and self.thinking_tokens_count < self.max_thinking_tokens
+                and not self.wait_inserted
+                and self.thinking_tokens_count > 5  # 至少思考5个token后才考虑插入wait
+                and scores[0][self.think_end_token] == scores[0].max()
+            ):  # </think>必须是概率最高的token
+
+                # 强制选择wait token
+                scores[:] = self.neg_inf
+                scores[0][self.wait_token] = 0
+                self.wait_inserted = True
+                return scores
+
             # 当接近token限制时，增加结束思考的概率
             if self.thinking_tokens_count >= self.max_thinking_tokens * 0.95:
                 # 增强换行和结束思考token的概率
@@ -150,6 +155,7 @@ def translate_dataset(
     max_new_tokens,
     seed,
     device_map,
+    enable_wait_insertion,
 ):
     """
     Translate dataset using local model inference
@@ -244,7 +250,9 @@ def translate_dataset(
                             model.device
                         )
                         processor = ThinkingTokenBudgetProcessor(
-                            tokenizer, max_thinking_tokens=thinking_budget
+                            tokenizer,
+                            max_thinking_tokens=thinking_budget,
+                            enable_wait_insertion=enable_wait_insertion,
                         )
                         generated_ids = model.generate(
                             **model_inputs,
@@ -322,6 +330,12 @@ if __name__ == "__main__":
         help="Maximum thinking tokens (0 to disable)",
     )
     parser.add_argument(
+        "--enable_wait_insertion",
+        type=bool,
+        default=False,
+        help="Enable wait insertion for longer thinking",
+    )
+    parser.add_argument(
         "--device_map",
         type=str,
         default=None,
@@ -354,6 +368,7 @@ if __name__ == "__main__":
     print(f"  Top-p: {args.top_p}")
     print(f"  Max new tokens: {args.max_new_tokens}")
     print(f"  Thinking budget: {args.thinking_budget}")
+    print(f"  enable_wait_insertion: {args.enable_wait_insertion}")
     print(f"  Device map: {args.device_map}")
     print(f"  Seed: {args.seed}")
     print()
@@ -368,4 +383,5 @@ if __name__ == "__main__":
         max_new_tokens=args.max_new_tokens,
         seed=args.seed,
         device_map=args.device_map,
+        enable_wait_insertion=args.enable_wait_insertion,
     )
