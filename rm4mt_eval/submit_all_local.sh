@@ -4,7 +4,7 @@ DATASETS=(
   # "CAMT"
   # "DRT-Gutenberg"
   # "WMT23-Biomedical-Doc"
-  # "WMT23-Biomedical-Sentence"
+  "WMT23-Biomedical-Sentence"
   # "WMT24-Biomedical"
   # "WMT-Literary"
   # "LITEVAL-CORPUS"
@@ -30,10 +30,11 @@ THINKING_BUDGETS=(
   # 300
   # 400
   # 500
-  # 1000
-  # 1500
-  # 2000
+  1000
+  2000
 )
+
+ENABLE_WAIT_INSERTION="False" 
 
 TEMPLATE="eval_local.sh"
 
@@ -61,6 +62,7 @@ for dataset in "${DATASETS[@]}"; do
         -e "s|^INPUT_DIR=.*|INPUT_DIR=\"/scratch/project_462000941/members/zihao/rm4mt/rm4mt_dataset/processed/${dataset}\"|" \
         -e "s|^MODEL_NAME=.*|MODEL_NAME=\"${model}\"|" \
         -e "s|^THINKING_BUDGET=.*|THINKING_BUDGET=${budget}|" \
+        -e "s|^ENABLE_WAIT_INSERTION=.*|ENABLE_WAIT_INSERTION=${ENABLE_WAIT_INSERTION}|" \
         "$TEMPLATE" >"$tmp_script"
 
       chmod +x "$tmp_script"

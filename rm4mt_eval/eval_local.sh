@@ -19,7 +19,7 @@ source /flash/project_462000941/venv/rm4mt_env/bin/activate
 INPUT_DIR=""
 MODEL_NAME=""
 THINKING_BUDGET=
-ENABLE_WAIT_INSERTION=True
+ENABLE_WAIT_INSERTION=""
 SEED=42
 
 if [ "$THINKING_BUDGET" -eq 0 ]; then
@@ -32,26 +32,32 @@ fi
 
 DATASET_NAME=$(basename "$INPUT_DIR")
 
-if [ "$ENABLE_WAIT_INSERTION" = "True" ]; then
-    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
-else
+if [ "$ENABLE_WAIT_INSERTION" = "False" ]; then
     OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
+else
+    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
 fi
 
 SCRIPT="eval_local.py"
 
 echo "Translating files in $INPUT_DIR ..."
-python "$SCRIPT" \
-    --input_dir "$INPUT_DIR" \
-    --output_dir "$OUTPUT_DIR" \
-    --model "$MODEL_NAME" \
-    --temperature "$TEMPERATURE" \
-    --top_p "$TOP_P" \
+
+CMD="python $SCRIPT \
+    --input_dir \"$INPUT_DIR\" \
+    --output_dir \"$OUTPUT_DIR\" \
+    --model \"$MODEL_NAME\" \
+    --temperature \"$TEMPERATURE\" \
+    --top_p \"$TOP_P\" \
     --max_new_tokens 12000 \
-    --thinking_budget "$THINKING_BUDGET" \
-    --enable_wait_insertion "$ENABLE_WAIT_INSERTION" \
-    --seed "$SEED" \
-    --device_map "auto"
+    --thinking_budget \"$THINKING_BUDGET\" \
+    --seed \"$SEED\" \
+    --device_map \"auto\""
+
+if [ "$ENABLE_WAIT_INSERTION" = "True" ]; then
+    CMD="$CMD --enable_wait_insertion"
+fi
+
+eval $CMD
 
 echo "Done: results saved to $OUTPUT_DIR"
 
