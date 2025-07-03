@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=GEMBA-DRT-Gutenberg-Qwen3-Gemini-2.0-Flash
-#SBATCH --output=/scratch/project_462000941/members/zihao/slurmlog/gemba/%x_%j.out
-#SBATCH --error=/scratch/project_462000941/members/zihao/slurmlog/gemba/%x_%j.err
+#SBATCH --job-name=GEMBA-MULTI
+#SBATCH --output=/scratch/project_462000941/members/zihao/rm4mt/logs/gemba/%x_%j.out
+#SBATCH --error=/scratch/project_462000941/members/zihao/rm4mt/logs/gemba/%x_%j.err
 #SBATCH --partition=small
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --time=3-00:00:00
+#SBATCH --time=24:00:00
 #SBATCH --mem=32G
 #SBATCH --account=project_462000675
 
@@ -16,42 +16,62 @@ echo "Job started at: $(date)"
 source /users/lizihao1/miniconda3/etc/profile.d/conda.sh
 conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
 
-# module use /appl/local/csc/modulefiles/
-# module load pytorch/2.5
-# source /flash/project_462000941/venv/rm4mt_env/bin/activate
-
 SCRIPT="compute_gemba.py"
+MODEL="Qwen"
 
-INPUT_ROOT="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/DRT-Gutenberg"
-OUTPUT_ROOT="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gemba/DRT-Gutenberg"
-
+INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
+OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gemba"
 
 MAX_WORKERS=5
 BATCH_SIZE=100
-
-# Set to true to force reprocessing of files, or false to skip already processed files
 OVERWRITE=false
 
-echo "Computing GEMBA scores for files in $INPUT_ROOT ..."
+DATASETS=(
+  # "CAMT"
+  "DRT-Gutenberg"
+  "WMT23-Biomedical-Doc"
+  "WMT23-Biomedical-Sentence"
+  "WMT24-Biomedical"
+  "WMT-Literary"
+  "LITEVAL-CORPUS"
+  "CommonsenseMT-Contextless"
+  "CommonsenseMT-Contextual"
+  "CommonsenseMT-Lexical"
+  "RTT"
+)
 
-if [ "$OVERWRITE" = true ]; then
+echo "Computing GEMBA scores for models '$MODEL'..."
+
+for DATASET in "${DATASETS[@]}"; do
+  INPUT_ROOT="${INPUT_BASE}/${DATASET}/${MODEL}"
+  OUTPUT_ROOT="${OUTPUT_BASE}/${DATASET}"
+
+  echo ""
+  echo "-----------------------------------------"
+  echo "Processing dataset: $DATASET"
+  echo "Input:  $INPUT_ROOT"
+  echo "Output: $OUTPUT_ROOT"
+  echo "-----------------------------------------"
+
+  if [ "$OVERWRITE" = true ]; then
     echo "Mode: Overwrite existing files"
     python "$SCRIPT" \
-        --input_root "$INPUT_ROOT" \
-        --output_root "$OUTPUT_ROOT" \
-        --max_workers "$MAX_WORKERS" \
-        --batch_size "$BATCH_SIZE" \
-        --overwrite
-else
+      --input_root "$INPUT_ROOT" \
+      --output_root "$OUTPUT_ROOT" \
+      --max_workers "$MAX_WORKERS" \
+      --batch_size "$BATCH_SIZE" \
+      --overwrite
+  else
     echo "Mode: Skip already processed files"
     python "$SCRIPT" \
-        --input_root "$INPUT_ROOT" \
-        --output_root "$OUTPUT_ROOT" \
-        --max_workers "$MAX_WORKERS" \
-        --batch_size "$BATCH_SIZE"
-fi
+      --input_root "$INPUT_ROOT" \
+      --output_root "$OUTPUT_ROOT" \
+      --max_workers "$MAX_WORKERS" \
+      --batch_size "$BATCH_SIZE"
+  fi
+done
 
-echo "Done: results saved to $OUTPUT_ROOT"
+echo "All datasets done."
 
 end_time=$(date +%s)
 echo "Job ended at: $(date)"
