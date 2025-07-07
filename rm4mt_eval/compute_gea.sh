@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=GEMBA-MULTI
-#SBATCH --output=/scratch/project_462000941/members/zihao/rm4mt/logs/gemba/%x_%j.out
-#SBATCH --error=/scratch/project_462000941/members/zihao/rm4mt/logs/gemba/%x_%j.err
+#SBATCH --job-name=GEA-MULTI
+#SBATCH --output=/scratch/project_462000941/members/zihao/rm4mt/logs/gea/%x_%j.out
+#SBATCH --error=/scratch/project_462000941/members/zihao/rm4mt/logs/gea/%x_%j.err
 #SBATCH --partition=small
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --time=24:00:00
+#SBATCH --time=2:00:00
 #SBATCH --mem=32G
 #SBATCH --account=project_462000675
 
@@ -16,37 +16,26 @@ echo "Job started at: $(date)"
 source /users/lizihao1/miniconda3/etc/profile.d/conda.sh
 conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
 
-SCRIPT="compute_gemba.py"
-MODEL="Qwen"
+SCRIPT="compute_gea.py"
 
 # INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gemba"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gea"
 
 INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
-OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_gemba"
+OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_gea"
 
 MAX_WORKERS=5
 BATCH_SIZE=100
 OVERWRITE=false
 
 DATASETS=(
-  # "CAMT"
   "DRT-Gutenberg"
-  "WMT23-Biomedical-Doc"
-  "WMT23-Biomedical-Sentence"
-  "WMT24-Biomedical"
-  "WMT-Literary"
-  "LITEVAL-CORPUS"
-  "CommonsenseMT-Contextless"
-  "CommonsenseMT-Contextual"
-  "CommonsenseMT-Lexical"
-  "RTT"
+  # "WMT-Literary"
+  # "LITEVAL-CORPUS"
 )
 
-echo "Computing GEMBA scores for models '$MODEL'..."
-
 for DATASET in "${DATASETS[@]}"; do
-  INPUT_ROOT="${INPUT_BASE}/${DATASET}/${MODEL}"
+  INPUT_ROOT="${INPUT_BASE}/${DATASET}"
   OUTPUT_ROOT="${OUTPUT_BASE}/${DATASET}"
 
   echo ""

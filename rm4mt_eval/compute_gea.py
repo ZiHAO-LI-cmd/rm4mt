@@ -40,32 +40,49 @@ def save_jsonl(data, filepath):
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
 
-def build_prompt(item, use_ref):
+def build_prompt(item, scale):
     src_lang_name = LANG_CODE_TO_NAME[item["src_lang"]]
     tgt_lang_name = LANG_CODE_TO_NAME[item["tgt_lang"]]
     src_text = item["src_text"]
     hyp_text = item["hyp_text"]
-    tgt_text = item["tgt_text"]
-    if use_ref == True:
-        prompt = prompt = (
-            f'Score the following translation from {src_lang_name} to {tgt_lang_name} with respect to the human reference on a continuous scale from 0 to 100, where a score of zero means "no meaning preserved" and score of one hundred means "perfect preservation of meaning, with faithfulness, expressiveness, and elegance".\nOnly output the score number.\n{src_lang_name} source: "{src_text}"\n{tgt_lang_name} human reference: "{tgt_text}"\n{tgt_lang_name} translation: "{hyp_text}"\nScore:'
+
+    if scale == 100:
+        sys_prompt = (
+            f"Please evaluate the following {tgt_lang_name} translation of an {src_lang_name} text. Rate the translation on a scale of 0 to 100, where:\n"
+            f"- 10 points: Poor translation; the text is somewhat understandable but contains significant errors and awkward phrasing that greatly hinder comprehension for a {tgt_lang_name} reader.\n"
+            f"- 30 points: Fair translation; the text conveys the basic meaning but lacks fluency and contains several awkward phrases or inaccuracies, making it challenging for a {tgt_lang_name} reader to fully grasp the intended message.\n"
+            f"- 50 points: Good translation; the text is mostly fluent and conveys the original meaning well, but may have minor awkwardness or slight inaccuracies that could confuse a {tgt_lang_name} reader.\n"
+            f"- 70 points: Very good translation; the text is smooth and natural, effectively conveying the intended meaning, but may still have minor issues that could slightly affect understanding for a {tgt_lang_name} reader.\n"
+            f"- 90 points: Excellent translation; the text is fluent and natural, conveying the original meaning clearly and effectively, with no significant issues that would hinder understanding for a {tgt_lang_name} reader.\n"
+            f"Please only output the score number."
+        )
+    elif scale == 5:
+        sys_prompt = (
+            f"Please evaluate the following {tgt_lang_name} translation of an {src_lang_name} text. Rate the translation on a scale of 0 to 5, where:\n"
+            f"- 1 point: Poor translation; the text is somewhat understandable but contains significant errors and awkward phrasing that greatly hinder comprehension for a {tgt_lang_name} reader.\n"
+            f"- 2 points: Fair translation; the text conveys the basic meaning but lacks fluency and contains several awkward phrases or inaccuracies, making it challenging for a {tgt_lang_name} reader to fully grasp the intended message.\n"
+            f"- 3 points: Good translation; the text is mostly fluent and conveys the original meaning well, but may have minor awkwardness or slight inaccuracies that could confuse a {tgt_lang_name} reader.\n"
+            f"- 4 points: Very good translation; the text is smooth and natural, effectively conveying the intended meaning, but may still have minor issues that could slightly affect understanding for a {tgt_lang_name} reader.\n"
+            f"- 5 points: Excellent translation; the text is fluent and natural, conveying the original meaning clearly and effectively, with no significant issues that would hinder understanding for a {tgt_lang_name} reader.\n"
+            f"Please only output the score number."
         )
     else:
-        prompt = prompt = (
-            f'Score the following translation from {src_lang_name} to {tgt_lang_name} on a continuous scale from 0 to 100, where a score of zero means "no meaning preserved" and score of one hundred means "perfect preservation of meaning, with faithfulness, expressiveness, and elegance".\nOnly output the score number.\n{src_lang_name} source: "{src_text}"\n{tgt_lang_name} translation: "{hyp_text}"\nScore:'
-        )
-    return prompt
+        return        
+
+    prompt = (
+        f'<text>\n{src_text}\n</text>\n<translation>\n{hyp_text}\n</translation>'
+    )
+    return sys_prompt, prompt
 
 
-def compute_gemba_score(client, item: Dict[str, Any], use_ref: bool) -> Any:
-    """Compute GEMBA score for a single item."""
-    prompt = build_prompt(item, use_ref)
+def compute_score(client, item: Dict[str, Any], scale: int) -> Any:
+    """Compute GEA score for a single item."""
+    sys_prompt, prompt = build_prompt(item, scale)
     try:
         response = client.models.generate_content(
-            # model="gemini-2.5-flash-preview-05-20",
             model="gemini-2.0-flash",
             contents=prompt,
-            config={"seed": 42, "stopSequences": ["\n"]},
+            config={"system_instruction": sys_prompt, "temperature": 0.1, "seed": 42, "stopSequences": ["\n"]},
         )
 
         # Check if response.text exists and is not None
@@ -92,12 +109,12 @@ def compute_gemba_score(client, item: Dict[str, Any], use_ref: bool) -> Any:
         return f"Error: {str(e)}"
 
 
-def compute_gemba_scores(
-    client, items: List[Dict[str, Any]], use_ref: bool, max_workers: int = 10
+def compute_scores(
+    client, items: List[Dict[str, Any]], scale: int = 5, max_workers: int = 10
 ) -> List[Any]:
-    """Compute GEMBA scores for multiple items in parallel."""
+    """Compute GEA scores for multiple items in parallel."""
     scores = []
-    process_func = partial(compute_gemba_score, client, use_ref=use_ref)
+    process_func = partial(compute_score, client)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(process_func, item) for item in items]
@@ -105,7 +122,7 @@ def compute_gemba_scores(
         for future in tqdm(
             concurrent.futures.as_completed(futures),
             total=len(futures),
-            desc=f"Computing GEMBA scores ({'with' if use_ref else 'without'} reference)",
+            desc=f"Computing GEA scores",
             unit="item",
         ):
             scores.append(future.result())
@@ -123,6 +140,8 @@ def main(
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
     jsonl_files = glob(os.path.join(input_root, "*", "budget_*", "*.jsonl"))
+
+    print(f"Found {len(jsonl_files)} JSONL file")
 
     for input_path in tqdm(jsonl_files, desc="Processing files"):
         relative_path = os.path.relpath(input_path, input_root)
@@ -146,29 +165,24 @@ def main(
             batch = data[i : i + batch_size]
 
             # Check which items in the batch need processing
-            items_needing_gemba = [item for item in batch if "gemba_score" not in item]
-            items_needing_gemba_noref = [
-                item for item in batch if "gemba_noref_score" not in item
-            ]
+            items_needing_gea_100 = [item for item in batch if "gea_100" not in item]
+            items_needing_gea_5 = [item for item in batch if "gea_5" not in item]
 
-            # Process items that need gemba scores
-            if items_needing_gemba:
-                gemba_scores = compute_gemba_scores(
-                    client, items_needing_gemba, use_ref=True, max_workers=max_workers
+            # Process items that need GEA100 scores
+            if items_needing_gea_100:
+                gea100_scores = compute_scores(
+                    client, items_needing_gea_100, scale=100, max_workers=max_workers
                 )
-                for item, score in zip(items_needing_gemba, gemba_scores):
-                    item["gemba_score"] = score
+                for item, score in zip(items_needing_gea_100, gea100_scores):
+                    item["gea_100"] = score
 
-            # Process items that need gemba_noref scores
-            if items_needing_gemba_noref:
-                gemba_noref_scores = compute_gemba_scores(
-                    client,
-                    items_needing_gemba_noref,
-                    use_ref=False,
-                    max_workers=max_workers,
+            # Process items that need GEA5 scores
+            if items_needing_gea_5:
+                gea5_scores = compute_scores(
+                    client, items_needing_gea_5, scale=5, max_workers=max_workers
                 )
-                for item, score in zip(items_needing_gemba_noref, gemba_noref_scores):
-                    item["gemba_noref_score"] = score
+                for item, score in zip(items_needing_gea_5, gea5_scores):
+                    item["gea_5"] = score                    
 
             # Save intermediate results after each batch
             save_jsonl(data, temp_output_path)
