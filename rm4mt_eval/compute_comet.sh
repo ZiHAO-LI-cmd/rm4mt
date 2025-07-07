@@ -22,6 +22,9 @@ MODEL="Qwen"
 INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
 OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_comet"
 
+INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
+OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_comet"
+
 OVERWRITE=false
 
 GPU_COUNT=${SLURM_GPUS_PER_TASK}

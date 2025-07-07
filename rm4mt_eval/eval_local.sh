@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=eval
-#SBATCH --output=/scratch/project_462000941/members/zihao/slurmlog/eval_local/%x_%j.out
-#SBATCH --error=/scratch/project_462000941/members/zihao/slurmlog/eval_local/%x_%j.err
+#SBATCH --output=/scratch/project_462000941/members/zihao/rm4mt/logs/eval_local/%x_%j.out
+#SBATCH --error=/scratch/project_462000941/members/zihao/rm4mt/logs/eval_local/%x_%j.err
 #SBATCH --partition=small-g
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
-#SBATCH --time=24:00:00
+#SBATCH --time=3-00:00:00
 #SBATCH --account=project_462000675
 
 start_time=$(date +%s)

@@ -19,8 +19,11 @@ conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
 SCRIPT="compute_gemba.py"
 MODEL="Qwen"
 
-INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
-OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gemba"
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gemba"
+
+INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
+OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_gemba"
 
 MAX_WORKERS=5
 BATCH_SIZE=100
