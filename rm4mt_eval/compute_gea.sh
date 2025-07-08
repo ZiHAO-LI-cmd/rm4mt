@@ -30,8 +30,8 @@ OVERWRITE=false
 
 DATASETS=(
   "DRT-Gutenberg"
-  # "WMT-Literary"
-  # "LITEVAL-CORPUS"
+  "WMT-Literary"
+  "LITEVAL-CORPUS"
 )
 
 for DATASET in "${DATASETS[@]}"; do

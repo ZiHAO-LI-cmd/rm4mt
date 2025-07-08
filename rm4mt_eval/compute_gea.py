@@ -114,7 +114,7 @@ def compute_scores(
 ) -> List[Any]:
     """Compute GEA scores for multiple items in parallel."""
     scores = []
-    process_func = partial(compute_score, client)
+    process_func = partial(compute_score, client, scale=scale)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(process_func, item) for item in items]
