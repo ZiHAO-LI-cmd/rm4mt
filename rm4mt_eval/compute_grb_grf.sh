@@ -18,11 +18,11 @@ conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
 
 SCRIPT="compute_grb_grf.py"
 
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_grb_grf"
+INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
+OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_grb_grf"
 
-INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
-OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_grb_grf"
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_grb_grf"
 
 MAX_WORKERS=5
 BATCH_SIZE=100

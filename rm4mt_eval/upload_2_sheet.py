@@ -65,8 +65,10 @@ def process_data(root_dir):
                                 for key in [
                                     "comet_score",
                                     "comet_kiwi_score",
-                                    "gemba_score",
-                                    "gemba_noref_score",
+                                    "grb",
+                                    "grf",
+                                    "gea_100",
+                                    "gea_5",
                                     "thinking_length",
                                 ]:
                                     if key in record:
@@ -74,7 +76,6 @@ def process_data(root_dir):
                                             data_entry[key] = float(record[key])
                                         except (ValueError, TypeError):
                                             print(f"Warning: Non-numeric value for {key} in file {file_path}. Skipping value.")
-
                                 all_data.append(data_entry)
                             except json.JSONDecodeError:
                                 print(f"Warning: Found invalid JSON line in file {file_path}.")
@@ -96,8 +97,10 @@ def prepare_data_for_upload(df):
     print(f"Available metrics: {available_metrics}")
     if {'comet_score', 'comet_kiwi_score'}.issubset(available_metrics):
         metrics = ['comet_score', 'comet_kiwi_score']
-    elif {'gemba_score', 'gemba_noref_score'}.issubset(available_metrics):
-        metrics = ['gemba_score', 'gemba_noref_score']
+    elif {'grb', 'grf'}.issubset(available_metrics):
+        metrics = ['grb', 'grf']
+    elif {'gea_100', 'gea_5'}.issubset(available_metrics):
+        metrics = ["gea_100", "gea_5"]
     elif {'thinking_length'}.issubset(available_metrics):
         metrics = ["thinking_length"]
     else:

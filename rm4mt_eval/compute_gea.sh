@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --time=2:00:00
+#SBATCH --time=12:00:00
 #SBATCH --mem=32G
 #SBATCH --account=project_462000675
 
@@ -18,11 +18,11 @@ conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
 
 SCRIPT="compute_gea.py"
 
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gea"
+INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
+OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gea"
 
-INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
-OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_gea"
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_gea"
 
 MAX_WORKERS=5
 BATCH_SIZE=100
