@@ -9,6 +9,7 @@
 /rm4mt_wait_translated_with_grb_grf
 /rm4mt_wait_translated_with_gea
 /archive
+/rm4mt_eval/archive
 /rm4mt_translated_api
 /rm4mt_eval/tmp_jobs
 .env

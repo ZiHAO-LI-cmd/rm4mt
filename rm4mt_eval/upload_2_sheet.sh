@@ -20,6 +20,14 @@ source /flash/project_462000941/venv/rm4mt_env/bin/activate
 # ROOT_DIRECTORY="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_grb_grf"
 # GOOGLE_SHEET_URL="https://docs.google.com/spreadsheets/d/1PRIfwNA4l2TG3oMFlgM8LIGuxvCH8prfgEvbGMDhqIY/edit?usp=sharing"
 
+# Gemini GEA Score
+# ROOT_DIRECTORY="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gea"
+# GOOGLE_SHEET_URL="https://docs.google.com/spreadsheets/d/16nVSzWScuuYThX2ZgQAyZ0V5ip5d1GFPKCABjG6IHf8/edit?usp=sharing"
+
+# Gemini GEA Score (Wait)
+# ROOT_DIRECTORY="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_gea"
+# GOOGLE_SHEET_URL="https://docs.google.com/spreadsheets/d/11WAU3v3uKN1wV3G7crmGDyo3u4QX4aGlhWpQN7tn9As/edit?usp=sharing"
+
 # Thingking Token Length
 # ROOT_DIRECTORY="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
 # GOOGLE_SHEET_URL="https://docs.google.com/spreadsheets/d/1k_zR5v7em_iz1J3K6p4qRYvFrzbFDOjI8lLWtPK3YCM/edit?usp=sharing"
