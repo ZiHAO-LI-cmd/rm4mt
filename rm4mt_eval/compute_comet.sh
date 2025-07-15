@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
-#SBATCH --time=8:00:00
+#SBATCH --time=12:00:00
 #SBATCH --account=project_462000675
 
 start_time=$(date +%s)
@@ -17,10 +17,9 @@ module load pytorch/2.5
 source /flash/project_462000941/venv/rm4mt_env/bin/activate
 
 SCRIPT="compute_comet.py"
-MODEL="Qwen"
 
-INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
-OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_comet"
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_comet"
 
 INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
 OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_comet"
@@ -31,21 +30,21 @@ GPU_COUNT=${SLURM_GPUS_PER_TASK}
 echo "Using $GPU_COUNT GPUs based on SLURM_GPUS_PER_TASK."
 
 DATASETS=(
-  # "CAMT"
-  "DRT-Gutenberg"
-  "WMT23-Biomedical-Doc"
-  "WMT23-Biomedical-Sentence"
-  "WMT24-Biomedical"
-  "WMT-Literary"
-  "LITEVAL-CORPUS"
-  "CommonsenseMT-Contextless"
-  "CommonsenseMT-Contextual"
-  "CommonsenseMT-Lexical"
-  "RTT"
+  "CAMT"
+  # "DRT-Gutenberg"
+  # "WMT23-Biomedical-Doc"
+  # "WMT23-Biomedical-Sentence"
+  # "WMT24-Biomedical"
+  # "WMT-Literary"
+  # "LITEVAL-CORPUS"
+  # "CommonsenseMT-Contextless"
+  # "CommonsenseMT-Contextual"
+  # "CommonsenseMT-Lexical"
+  # "RTT"
 )
 
 for DATASET in "${DATASETS[@]}"; do
-  INPUT_ROOT="${INPUT_BASE}/${DATASET}/${MODEL}"
+  INPUT_ROOT="${INPUT_BASE}/${DATASET}"
   OUTPUT_ROOT="${OUTPUT_BASE}/${DATASET}"
 
   echo ""
