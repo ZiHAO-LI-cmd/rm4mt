@@ -5,6 +5,7 @@ import re
 import gspread
 from gspread_dataframe import set_with_dataframe
 import argparse
+import time
 
 
 def parse_budget_from_dirname(dirname):
@@ -169,6 +170,7 @@ def upload_to_google_sheets(sheets_data, sheet_url, credentials_file):
     for name, df in sheets_data.items():
         print(f"  Processing worksheet: {name}...")
         try:
+            time.sleep(2)
             worksheet = spreadsheet.worksheet(name)
             print(f"    Found worksheet '{name}'. Clearing and updating...")
             worksheet.clear()
