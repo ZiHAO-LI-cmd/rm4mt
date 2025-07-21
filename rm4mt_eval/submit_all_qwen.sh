@@ -36,7 +36,7 @@ THINKING_BUDGETS=(
 
 ENABLE_WAIT_INSERTION="False" 
 
-TEMPLATE="eval_local.sh"
+TEMPLATE="eval_qwen.sh"
 
 TMP_SCRIPT_DIR="./tmp_jobs"
 mkdir -p "$TMP_SCRIPT_DIR"

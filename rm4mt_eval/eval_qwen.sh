@@ -38,7 +38,7 @@ else
     OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
 fi
 
-SCRIPT="eval_local.py"
+SCRIPT="eval_qwen.py"
 
 echo "Translating files in $INPUT_DIR ..."
 

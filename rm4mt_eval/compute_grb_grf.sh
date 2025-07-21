@@ -29,7 +29,7 @@ BATCH_SIZE=100
 OVERWRITE=false
 
 DATASETS=(
-  # "CAMT"
+  "CAMT"
   "DRT-Gutenberg"
   "WMT23-Biomedical-Doc"
   "WMT23-Biomedical-Sentence"
