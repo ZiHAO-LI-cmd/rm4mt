@@ -133,21 +133,22 @@ def extract_thinking_and_response(thinking_budget, text):
     response_content = ""
     
     if thinking_budget == 0:
-        # For budget=0, extract content between "Here's the translation:\n\n" and the next "\n\n"
-        start_marker = "Here's the translation:\n\n"
+        # For budget=0, extract content between "assistant\n\n" and the next "\n\n"
+        start_marker = "assistant\n\n"
         start_pos = text.find(start_marker)
         
         if start_pos != -1:
             content_start = start_pos + len(start_marker)
-            # Find the next "\n\n" after the start marker
-            end_pos = text.find("\n\n", content_start)
-            if end_pos != -1:
-                response_content = text[content_start:end_pos].strip()
-            else:
-                # If no ending "\n\n" found, take everything after the start marker
-                response_content = text[content_start:].strip()
+            # # Find the next "\n\n" after the start marker
+            # end_pos = text.find("\n\n", content_start)
+            # if end_pos != -1:
+            #     response_content = text[content_start:end_pos].strip()
+            # else:
+            #     # If no ending "\n\n" found, take everything after the start marker
+            #     response_content = text[content_start:].strip()
+            response_content = text[content_start:].strip()
         else:
-            # Fallback: if no "Here's the translation:" found, return the whole text
+            # Fallback: if no "assistant\n\n" found, return the whole text
             response_content = text.strip()
     else:
         # For budget>0, use thinking tags
@@ -165,12 +166,12 @@ def extract_thinking_and_response(thinking_budget, text):
             
             if start_pos != -1:
                 content_start = start_pos + len(start_marker)
-                # Find the next "\n\n" after the start marker
-                end_pos = after_think_end.find("\n\n", content_start)
+                # Find the next "\n\n(Note" after the start marker
+                end_pos = after_think_end.find("\n\n(Note", content_start)
                 if end_pos != -1:
                     response_content = after_think_end[content_start:end_pos].strip()
                 else:
-                    # If no ending "\n\n" found, take everything after the start marker
+                    # If no ending "\n\n(Note" found, take everything after the start marker
                     response_content = after_think_end[content_start:].strip()
             else:
                 # Fallback: if no "\n\n" found after </think>, take everything after </think>
@@ -253,7 +254,7 @@ def translate_dataset(
 
                 src_lang_name = LANG_CODE_TO_NAME[src_lang]
                 tgt_lang_name = LANG_CODE_TO_NAME[tgt_lang]
-                prompt = f"Translate the following text from {src_lang_name} to {tgt_lang_name}\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
+                prompt = f"Translate the following text from {src_lang_name} to {tgt_lang_name}\nPlease only provide me with the translated content, without any additional explanations\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
                 messages = [{"role": "user", "content": prompt}]
 
                 try:
