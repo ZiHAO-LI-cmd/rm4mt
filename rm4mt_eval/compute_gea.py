@@ -139,7 +139,15 @@ def main(
 ):
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-    jsonl_files = glob(os.path.join(input_root, "*", "budget_*", "*.jsonl"))
+    # Find JSONL files in budget_* and reasoning_effort_* directories
+    patterns = [
+        os.path.join(input_root, "*", "budget_*", "*.jsonl"),
+        os.path.join(input_root, "*", "reasoning_effort_*", "*.jsonl")
+    ]
+    
+    jsonl_files = []
+    for pattern in patterns:
+        jsonl_files.extend(glob(pattern))
 
     print(f"Found {len(jsonl_files)} JSONL file")
 

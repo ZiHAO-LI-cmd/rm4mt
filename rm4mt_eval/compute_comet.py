@@ -37,8 +37,18 @@ def main(input_root, output_root, gpu_num, overwrite=False):
     cometkiwi_model_path = download_model("Unbabel/wmt22-cometkiwi-da")
     cometkiwi_model = load_from_checkpoint(cometkiwi_model_path)
 
-    jsonl_files = glob(os.path.join(input_root, "*", "budget_*", "*.jsonl"))
-    print(f"Found {len(jsonl_files)} files to proc")
+    # Find JSONL files in budget_* and reasoning_effort_* directories
+    patterns = [
+        os.path.join(input_root, "*", "budget_*", "*.jsonl"),
+        os.path.join(input_root, "*", "reasoning_effort_*", "*.jsonl")
+    ]
+    
+    jsonl_files = []
+    for pattern in patterns:
+        jsonl_files.extend(glob(pattern))
+
+    print(f"Found {len(jsonl_files)} files to process")
+
     for input_path in tqdm(jsonl_files, desc="Processing files"):
         relative_path = os.path.relpath(input_path, input_root)
         output_path = os.path.join(output_root, relative_path)
