@@ -2,7 +2,7 @@
 
 DATASETS=(
   # "CAMT"
-  "DRT-Gutenberg"
+  # "DRT-Gutenberg"
   # "WMT23-Biomedical-Doc"
   # "WMT23-Biomedical-Sentence"
   # "WMT24-Biomedical"
@@ -12,16 +12,17 @@ DATASETS=(
   # "CommonsenseMT-Contextual"
   # "CommonsenseMT-Lexical"
   # "RTT"
+  # "RAGtrans"
 )
 
 
 MODELS=(
-  "grok-3-mini"
+  # "grok-3-mini"
 )
 
 REASONING_EFFORTS=(
   # "low"
-  "high"
+  # "high"
 )
 
 TEMPLATE="eval_api_grok.sh"
