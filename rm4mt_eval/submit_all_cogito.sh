@@ -12,22 +12,23 @@ DATASETS=(
   # "CommonsenseMT-Contextual"
   # "CommonsenseMT-Lexical"
   # "RTT"
+  # "RAGtrans"
 )
 
 MODELS=(
-  "deepcogito/cogito-v1-preview-llama-3B"
-  "deepcogito/cogito-v1-preview-llama-8B"
+  # "deepcogito/cogito-v1-preview-llama-3B"
+  # "deepcogito/cogito-v1-preview-llama-8B"
 )
 
 THINKING_BUDGETS=(
-  0
-  100
-  200
-  300
-  400
-  500
-  1000
-  2000
+  # 0
+  # 100
+  # 200
+  # 300
+  # 400
+  # 500
+  # 1000
+  # 2000
 )
 
 ENABLE_WAIT_INSERTION="False" 
