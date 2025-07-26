@@ -182,7 +182,8 @@ def translate_dataset(
     )
 
     os.makedirs(output_dir, exist_ok=True)
-
+    
+    task = input_dir.split("/")[-1]
     for filename in os.listdir(input_dir):
         if not filename.endswith(".jsonl"):
             continue
@@ -219,8 +220,17 @@ def translate_dataset(
 
                 src_lang_name = LANG_CODE_TO_NAME[src_lang]
                 tgt_lang_name = LANG_CODE_TO_NAME[tgt_lang]
-                prompt = f"Translate the following text from {src_lang_name} to {tgt_lang_name}\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
-                messages = [{"role": "user", "content": prompt}]
+                if task == "RAGtrans":
+                    sys_prompt = f"You are a professional translator, and your task is to translate an given input sentence from {src_lang_name} to {tgt_lang_name}. In addition to the input sentence, you will be provided with a document that may contain relevant information to aid in the translation. However, be aware that some documents may contain irrelevant or noisy information."
+                    doc = item.get("doc", "")
+                    prompt = f"<document>\n{doc}\n<document>\nTranslate the following text from {src_lang_name} to {tgt_lang_name}\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
+                    messages = [
+                        {"role": "system", "content": sys_prompt},
+                        {"role": "user", "content": prompt},
+                    ]
+                else:
+                    prompt = f"Translate the following text from {src_lang_name} to {tgt_lang_name}\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
+                    messages = [{"role": "user", "content": prompt}]
 
                 try:
                     if thinking_budget == 0:

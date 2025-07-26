@@ -12,6 +12,7 @@ DATASETS=(
   # "CommonsenseMT-Contextual"
   # "CommonsenseMT-Lexical"
   # "RTT"
+  # "RAGtrans"
 )
 
 MODELS=(
