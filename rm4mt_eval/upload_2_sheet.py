@@ -9,10 +9,17 @@ import time
 
 
 def parse_budget_from_dirname(dirname):
-    """Extracts numbers from a directory name (e.g., budget_100)"""
+    """Extracts numbers from a directory name (e.g., budget_100) or effort level (e.g., reasoning_effort_high)"""
+    # First try to extract numbers (e.g., budget_100 -> "100")
     match = re.search(r'\d+$', dirname)
     if match:
-        return int(match.group())
+        return match.group()  # Return as string instead of int
+    
+    # Then try to extract effort level (e.g., reasoning_effort_high -> "high")
+    match = re.search(r'reasoning_effort_(\w+)$', dirname)
+    if match:
+        return match.group(1)
+    
     return None
 
 
