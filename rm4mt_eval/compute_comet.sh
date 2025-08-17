@@ -21,8 +21,8 @@ SCRIPT="compute_comet.py"
 # INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
 # OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_comet"
 
-INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
-OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_comet"
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_comet"
 
 OVERWRITE=false
 
@@ -30,7 +30,7 @@ GPU_COUNT=${SLURM_GPUS_PER_TASK}
 echo "Using $GPU_COUNT GPUs based on SLURM_GPUS_PER_TASK."
 
 DATASETS=(
-  "CAMT"
+  # "CAMT"
   # "DRT-Gutenberg"
   # "WMT23-Biomedical-Doc"
   # "WMT23-Biomedical-Sentence"
@@ -41,6 +41,7 @@ DATASETS=(
   # "CommonsenseMT-Contextual"
   # "CommonsenseMT-Lexical"
   # "RTT"
+  # "RAGtrans"
 )
 
 for DATASET in "${DATASETS[@]}"; do

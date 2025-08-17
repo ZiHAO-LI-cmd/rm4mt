@@ -31,7 +31,7 @@ THINKING_BUDGETS=(
   # 2000
 )
 
-ENABLE_WAIT_INSERTION="False" 
+ENABLE_WAIT_INSERTION="True" 
 
 TEMPLATE="eval_cogito.sh"
 

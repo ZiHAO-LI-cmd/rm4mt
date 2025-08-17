@@ -16,9 +16,9 @@ DATASETS=(
 )
 
 MODELS=(
-  "Krystalan/DRT-7B"
-  "Krystalan/DRT-8B"
-  "Krystalan/DRT-32B"
+  # "Krystalan/DRT-7B"
+  # "Krystalan/DRT-8B"
+  # "Krystalan/DRT-14B"
 )
 
 THINKING_BUDGETS=(

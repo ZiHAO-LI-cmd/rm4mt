@@ -184,6 +184,9 @@ def translate_dataset(
         model_name, torch_dtype="auto", device_map="auto"
     )
 
+    model = torch.compile(model)
+    model.eval()
+
     os.makedirs(output_dir, exist_ok=True)
     
     task = input_dir.split("/")[-1]
@@ -252,11 +255,14 @@ def translate_dataset(
                         max_thinking_tokens=thinking_budget,
                         enable_wait_insertion=enable_wait_insertion,
                     )
-                    generated_ids = model.generate(
-                        **model_inputs,
-                        max_new_tokens=max_new_tokens,
-                        logits_processor=[processor],
-                    )
+
+                    with torch.no_grad():
+                        generated_ids = model.generate(
+                            **model_inputs,
+                            max_new_tokens=max_new_tokens,
+                            logits_processor=[processor],
+                            use_cache=True
+                        )
 
                     generated_text = tokenizer.decode(
                         generated_ids[0], skip_special_tokens=True

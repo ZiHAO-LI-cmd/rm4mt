@@ -18,8 +18,8 @@ conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
 
 SCRIPT="compute_grb_grf.py"
 
-INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
-OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_grb_grf"
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_grb_grf"
 
 # INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
 # OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_grb_grf"
@@ -29,17 +29,18 @@ BATCH_SIZE=100
 OVERWRITE=false
 
 DATASETS=(
-  "CAMT"
-  "DRT-Gutenberg"
-  "WMT23-Biomedical-Doc"
-  "WMT23-Biomedical-Sentence"
-  "WMT24-Biomedical"
-  "WMT-Literary"
-  "LITEVAL-CORPUS"
-  "CommonsenseMT-Contextless"
-  "CommonsenseMT-Contextual"
-  "CommonsenseMT-Lexical"
-  "RTT"
+  # "CAMT"
+  # "DRT-Gutenberg"
+  # "WMT23-Biomedical-Doc"
+  # "WMT23-Biomedical-Sentence"
+  # "WMT24-Biomedical"
+  # "WMT-Literary"
+  # "LITEVAL-CORPUS"
+  # "CommonsenseMT-Contextless"
+  # "CommonsenseMT-Contextual"
+  # "CommonsenseMT-Lexical"
+  # "RTT"
+  # "RAGtrans"
 )
 
 for DATASET in "${DATASETS[@]}"; do
