@@ -17,3 +17,5 @@
 /rm4mt_eval/*.json
 /rm4mt_eval/*.xlsx
 /logs
+/post_edited
+/post_edited_wait

@@ -1,0 +1,75 @@
+#!/bin/bash
+
+DATASETS=(
+  # "CAMT"
+  # "DRT-Gutenberg"
+  # "WMT23-Biomedical-Doc"
+  # "WMT23-Biomedical-Sentence"
+  # "WMT24-Biomedical"
+  # "WMT-Literary"
+  # "LITEVAL-CORPUS"
+  # "CommonsenseMT-Contextless"
+  # "CommonsenseMT-Contextual"
+  # "CommonsenseMT-Lexical"
+  # "RTT"
+  # "RAGtrans"
+)
+
+MODELS=(
+  # "Qwen/Qwen3-0.6B"
+  # "Qwen/Qwen3-1.7B"
+  # "Qwen/Qwen3-4B"
+  # "Qwen/Qwen3-8B"
+  # "Qwen/Qwen3-14B"
+  # "Qwen/Qwen3-32B"
+)
+
+THINKING_BUDGETS=(
+  # 0
+  # 100
+  # 200
+  # 300
+  # 400
+  # 500
+  # 1000
+  # 2000
+)
+
+ENABLE_WAIT_INSERTION="False" 
+
+TEMPLATE="post_editing_qwen.sh"
+
+TMP_SCRIPT_DIR="./tmp_jobs"
+mkdir -p "$TMP_SCRIPT_DIR"
+
+for dataset in "${DATASETS[@]}"; do
+  for model in "${MODELS[@]}"; do
+    for budget in "${THINKING_BUDGETS[@]}"; do
+
+      jobname="${dataset}_$(basename "$model")_b_${budget}"
+      tmp_script="${TMP_SCRIPT_DIR}/${jobname}.sh"
+
+      if [[ "$model" == *"32B"* ]]; then
+        GPUS_PER_TASK=2
+      else
+        GPUS_PER_TASK=1
+      fi
+
+      echo "Generating job: $jobname"
+
+      sed \
+        -e "s|^#SBATCH --job-name=.*|#SBATCH --job-name=${jobname}|" \
+        -e "s|^#SBATCH --gpus-per-task=.*|#SBATCH --gpus-per-task=${GPUS_PER_TASK}|" \
+        -e "s|^INPUT_DIR=.*|INPUT_DIR=\"/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_grb_grf/${dataset}/$(basename ${model})/budget_0\"|" \
+        -e "s|^MODEL_NAME=.*|MODEL_NAME=\"${model}\"|" \
+        -e "s|^THINKING_BUDGET=.*|THINKING_BUDGET=${budget}|" \
+        -e "s|^ENABLE_WAIT_INSERTION=.*|ENABLE_WAIT_INSERTION=${ENABLE_WAIT_INSERTION}|" \
+        -e "s|^DATASET_NAME=.*|DATASET_NAME=${dataset}|" \
+        "$TEMPLATE" >"$tmp_script"
+
+      chmod +x "$tmp_script"
+      sbatch "$tmp_script"
+
+    done
+  done
+done
