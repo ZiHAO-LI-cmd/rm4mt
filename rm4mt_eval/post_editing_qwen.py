@@ -218,9 +218,40 @@ def translate_dataset(
                 if not src_text or src_text in already_translated:
                     continue
                 hyp_text = item.get("hyp_text", "").strip()
-                grb_score = item.get("grb", 0)
-                grf_score = item.get("grf", 0)
-                quality_score = round((grb_score + grf_score) / 2, 2)
+                
+                # Safely extract and validate grb and grf scores
+                grb_raw = item.get("grb", 0)
+                grf_raw = item.get("grf", 0)
+                
+                # Convert to numeric values, return None if not valid
+                def safe_float_convert(value):
+                    try:
+                        if isinstance(value, (int, float)):
+                            return float(value)
+                        elif isinstance(value, str):
+                            # Try to convert string to float
+                            return float(value)
+                        else:
+                            return None
+                    except (ValueError, TypeError):
+                        return None
+                
+                grb_score = safe_float_convert(grb_raw)
+                grf_score = safe_float_convert(grf_raw)
+                
+                # Calculate quality score based on valid values
+                if grb_score is not None and grf_score is not None:
+                    # Both are valid numbers, take average
+                    quality_score = round((grb_score + grf_score) / 2, 2)
+                elif grb_score is not None:
+                    # Only grb is valid, use it
+                    quality_score = round(grb_score, 2)
+                elif grf_score is not None:
+                    # Only grf is valid, use it
+                    quality_score = round(grf_score, 2)
+                else:
+                    # Both are invalid, set to 80
+                    quality_score = 80
 
                 src_lang_name = LANG_CODE_TO_NAME[src_lang]
                 tgt_lang_name = LANG_CODE_TO_NAME[tgt_lang]
