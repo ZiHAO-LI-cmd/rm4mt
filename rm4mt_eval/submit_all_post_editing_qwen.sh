@@ -1,40 +1,41 @@
 #!/bin/bash
 
 DATASETS=(
-  # "CAMT"
-  # "DRT-Gutenberg"
-  # "WMT23-Biomedical-Doc"
-  # "WMT23-Biomedical-Sentence"
-  # "WMT24-Biomedical"
-  # "WMT-Literary"
-  # "LITEVAL-CORPUS"
-  # "CommonsenseMT-Contextless"
-  # "CommonsenseMT-Contextual"
-  # "CommonsenseMT-Lexical"
-  # "RTT"
-  # "RAGtrans"
+  "CAMT"
+  "DRT-Gutenberg"
+  "WMT23-Biomedical-Doc"
+  "WMT23-Biomedical-Sentence"
+  "WMT24-Biomedical"
+  "WMT-Literary"
+  "LITEVAL-CORPUS"
+  "CommonsenseMT-Contextless"
+  "CommonsenseMT-Contextual"
+  "CommonsenseMT-Lexical"
+  "RTT"
+  "RAGtrans"
 )
 
 MODELS=(
-  # "Qwen/Qwen3-0.6B"
-  # "Qwen/Qwen3-1.7B"
-  # "Qwen/Qwen3-4B"
-  # "Qwen/Qwen3-8B"
-  # "Qwen/Qwen3-14B"
-  # "Qwen/Qwen3-32B"
+  "Qwen/Qwen3-0.6B"
+  "Qwen/Qwen3-1.7B"
+  "Qwen/Qwen3-4B"
+  "Qwen/Qwen3-8B"
+  "Qwen/Qwen3-14B"
+  "Qwen/Qwen3-32B"
 )
 
 THINKING_BUDGETS=(
-  # 0
+  0
   # 100
   # 200
   # 300
   # 400
-  # 500
-  # 1000
+  500
+  1000
   # 2000
 )
 
+INCLUDE_QUALITY_SCORE="False"
 ENABLE_WAIT_INSERTION="False" 
 
 TEMPLATE="post_editing_qwen.sh"
@@ -64,6 +65,7 @@ for dataset in "${DATASETS[@]}"; do
         -e "s|^MODEL_NAME=.*|MODEL_NAME=\"${model}\"|" \
         -e "s|^THINKING_BUDGET=.*|THINKING_BUDGET=${budget}|" \
         -e "s|^ENABLE_WAIT_INSERTION=.*|ENABLE_WAIT_INSERTION=${ENABLE_WAIT_INSERTION}|" \
+        -e "s|^INCLUDE_QUALITY_SCORE=.*|INCLUDE_QUALITY_SCORE=${INCLUDE_QUALITY_SCORE}|" \
         -e "s|^DATASET_NAME=.*|DATASET_NAME=${dataset}|" \
         "$TEMPLATE" >"$tmp_script"
 

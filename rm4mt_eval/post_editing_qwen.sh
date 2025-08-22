@@ -20,6 +20,7 @@ INPUT_DIR=""
 MODEL_NAME=""
 THINKING_BUDGET=
 ENABLE_WAIT_INSERTION=""
+INCLUDE_QUALITY_SCORE=""
 DATASET_NAME=""
 SEED=42
 
@@ -54,6 +55,10 @@ CMD="python $SCRIPT \
 
 if [ "$ENABLE_WAIT_INSERTION" = "True" ]; then
     CMD="$CMD --enable_wait_insertion"
+fi
+
+if [ "$INCLUDE_QUALITY_SCORE" = "True" ]; then
+    CMD="$CMD --include_quality_score"
 fi
 
 eval $CMD

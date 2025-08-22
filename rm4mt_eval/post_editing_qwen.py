@@ -156,6 +156,7 @@ def translate_dataset(
     seed,
     device_map,
     enable_wait_insertion,
+    include_quality_score,
 ):
     """
     Translate dataset using local model inference
@@ -255,8 +256,13 @@ def translate_dataset(
 
                 src_lang_name = LANG_CODE_TO_NAME[src_lang]
                 tgt_lang_name = LANG_CODE_TO_NAME[tgt_lang]
-                sys_prompt = f"You are a professional translator, and your task is to refine the {tgt_lang_name} draft translation below based on the {src_lang_name} source text and its quality evaluation.\nPlease only provide me with the refined translation, without any additional explanations."
-                prompt = f"Source Text: {src_text}\nDraft Translation: {hyp_text}\nQuality Score: {quality_score}/100"
+                
+                if include_quality_score:
+                    sys_prompt = f"You are a professional translator, and your task is to refine the {tgt_lang_name} draft translation below based on the {src_lang_name} source text and its quality evaluation.\nPlease only provide me with the refined translation, without any additional explanations."
+                    prompt = f"Source Text: {src_text}\nDraft Translation: {hyp_text}\nQuality Score: {quality_score}/100"
+                else:
+                    sys_prompt = f"You are a professional translator, and your task is to refine the {tgt_lang_name} draft translation below based on the {src_lang_name} source text.\nPlease only provide me with the refined translation, without any additional explanations."
+                    prompt = f"Source Text: {src_text}\nDraft Translation: {hyp_text}"
                 messages = [
                     {"role": "system", "content": sys_prompt},
                     {"role": "user", "content": prompt}
@@ -380,6 +386,11 @@ if __name__ == "__main__":
         default=None,
         help="Device map for multi-GPU (e.g., 'auto', 'balanced', or custom mapping)",
     )
+    parser.add_argument(
+        "--include_quality_score",
+        action="store_true",
+        help="Include quality score in the prompt",
+    )
 
     args = parser.parse_args()
 
@@ -409,6 +420,7 @@ if __name__ == "__main__":
     print(f"  Thinking budget: {args.thinking_budget}")
     print(f"  enable_wait_insertion: {args.enable_wait_insertion}")
     print(f"  Device map: {args.device_map}")
+    print(f"  Include quality score: {args.include_quality_score}")
     print(f"  Seed: {args.seed}")
     print()
 
@@ -423,4 +435,5 @@ if __name__ == "__main__":
         seed=args.seed,
         device_map=args.device_map,
         enable_wait_insertion=args.enable_wait_insertion,
+        include_quality_score=args.include_quality_score,
     )
