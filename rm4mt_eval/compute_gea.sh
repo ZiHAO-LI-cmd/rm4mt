@@ -24,6 +24,9 @@ SCRIPT="compute_gea.py"
 # INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
 # OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_gea"
 
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_with_gea"
+
 MAX_WORKERS=5
 BATCH_SIZE=100
 OVERWRITE=false

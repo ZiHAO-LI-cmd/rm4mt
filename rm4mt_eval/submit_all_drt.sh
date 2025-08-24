@@ -22,7 +22,6 @@ MODELS=(
 )
 
 THINKING_BUDGETS=(
-  # 0
   # 100
   # 200
   # 300

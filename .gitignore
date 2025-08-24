@@ -18,4 +18,6 @@
 /rm4mt_eval/*.xlsx
 /logs
 /post_edited
-/post_edited_wait
+/post_edited_with_comet
+/post_edited_with_grb_grf
+/post_edited_with_gea

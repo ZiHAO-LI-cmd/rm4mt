@@ -1,41 +1,36 @@
 #!/bin/bash
 
 DATASETS=(
-  "CAMT"
-  "DRT-Gutenberg"
-  "WMT23-Biomedical-Doc"
-  "WMT23-Biomedical-Sentence"
-  "WMT24-Biomedical"
-  "WMT-Literary"
-  "LITEVAL-CORPUS"
-  "CommonsenseMT-Contextless"
-  "CommonsenseMT-Contextual"
-  "CommonsenseMT-Lexical"
-  "RTT"
-  "RAGtrans"
+  # "CAMT"
+  # "DRT-Gutenberg"
+  # "WMT23-Biomedical-Doc"
+  # "WMT23-Biomedical-Sentence"
+  # "WMT24-Biomedical"
+  # "WMT-Literary"
+  # "LITEVAL-CORPUS"
+  # "CommonsenseMT-Contextless"
+  # "CommonsenseMT-Contextual"
+  # "CommonsenseMT-Lexical"
+  # "RTT"
+  # "RAGtrans"
 )
 
 MODELS=(
-  "Qwen/Qwen3-0.6B"
-  "Qwen/Qwen3-1.7B"
-  "Qwen/Qwen3-4B"
-  "Qwen/Qwen3-8B"
-  "Qwen/Qwen3-14B"
-  "Qwen/Qwen3-32B"
+  # "Qwen/Qwen3-0.6B"
+  # "Qwen/Qwen3-1.7B"
+  # "Qwen/Qwen3-4B"
+  # "Qwen/Qwen3-8B"
+  # "Qwen/Qwen3-14B"
+  # "Qwen/Qwen3-32B"
 )
 
 THINKING_BUDGETS=(
-  0
-  # 100
-  # 200
-  # 300
-  # 400
-  500
-  1000
-  # 2000
+  # 0
+  # 500
+  # 1000
 )
 
-INCLUDE_QUALITY_SCORE="False"
+INCLUDE_QUALITY_SCORE="True"
 ENABLE_WAIT_INSERTION="False" 
 
 TEMPLATE="post_editing_qwen.sh"

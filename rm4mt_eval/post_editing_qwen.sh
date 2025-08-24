@@ -32,10 +32,10 @@ else
     TOP_P=0.95
 fi
 
-if [ "$ENABLE_WAIT_INSERTION" = "False" ]; then
-    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/post_edited/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
+if [ "$INCLUDE_QUALITY_SCORE" = "False" ]; then
+    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
 else
-    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/post_edited_wait/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
+    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/post_edited/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
 fi
 
 SCRIPT="post_editing_qwen.py"
