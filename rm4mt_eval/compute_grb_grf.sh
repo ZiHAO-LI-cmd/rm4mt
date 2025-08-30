@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --time=24:00:00
 #SBATCH --mem=32G
-#SBATCH --account=project_462000675
+#SBATCH --account=project_462000941
 
 start_time=$(date +%s)
 echo "Job started at: $(date)"
@@ -26,6 +26,9 @@ SCRIPT="compute_grb_grf.py"
 
 # INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited"
 # OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_with_grb_grf"
+
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score_with_grb_grf"
 
 MAX_WORKERS=5
 BATCH_SIZE=100

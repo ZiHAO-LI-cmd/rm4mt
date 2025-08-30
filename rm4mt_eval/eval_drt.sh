@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
 #SBATCH --time=3-00:00:00
-#SBATCH --account=project_462000675
+#SBATCH --account=project_462000941
 
 start_time=$(date +%s)
 echo "Job started at: $(date)"
@@ -38,7 +38,7 @@ CMD="python $SCRIPT \
     --input_dir \"$INPUT_DIR\" \
     --output_dir \"$OUTPUT_DIR\" \
     --model \"$MODEL_NAME\" \
-    --max_new_tokens 12000 \
+    --max_new_tokens 1024 \
     --thinking_budget \"$THINKING_BUDGET\" \
     --seed \"$SEED\" \
     --device_map \"auto\""

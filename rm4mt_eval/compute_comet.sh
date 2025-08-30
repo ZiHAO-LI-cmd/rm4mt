@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
 #SBATCH --time=12:00:00
-#SBATCH --account=project_462000675
+#SBATCH --account=project_462000941
 
 start_time=$(date +%s)
 echo "Job started at: $(date)"
@@ -26,6 +26,9 @@ SCRIPT="compute_comet.py"
 
 # INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited"
 # OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_with_comet"
+
+# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score"
+# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score_with_comet"
 
 OVERWRITE=false
 
