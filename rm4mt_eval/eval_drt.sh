@@ -25,9 +25,9 @@ SEED=42
 DATASET_NAME=$(basename "$INPUT_DIR")
 
 if [ "$ENABLE_WAIT_INSERTION" = "False" ]; then
-    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
+    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
 else
-    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated/${DATASET_NAME}/${MODEL_NAME}/budget_${THINKING_BUDGET}"
+    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
 fi
 
 SCRIPT="eval_drt.py"
@@ -38,7 +38,7 @@ CMD="python $SCRIPT \
     --input_dir \"$INPUT_DIR\" \
     --output_dir \"$OUTPUT_DIR\" \
     --model \"$MODEL_NAME\" \
-    --max_new_tokens 1024 \
+    --max_new_tokens 12000 \
     --thinking_budget \"$THINKING_BUDGET\" \
     --seed \"$SEED\" \
     --device_map \"auto\""
