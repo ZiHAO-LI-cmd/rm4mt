@@ -25,3 +25,6 @@
 /post_edited_without_quality_score_with_comet
 /post_edited_without_quality_score_with_grb_grf
 /post_edited_without_quality_score_with_gea
+/rm4mt_eval/analysis/*.pdf
+/rm4mt_eval/analysis/*.png
+/rm4mt_eval/analysis/*.drawio
