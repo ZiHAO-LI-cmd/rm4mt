@@ -31,7 +31,8 @@ THINKING_BUDGETS=(
   # 2000
 )
 
-ENABLE_WAIT_INSERTION="True" 
+ENABLE_WAIT_INSERTION="False" 
+ADD_DOC_FOR_RAGTRANS="False"
 
 TEMPLATE="eval_cogito.sh"
 
@@ -60,6 +61,7 @@ for dataset in "${DATASETS[@]}"; do
         -e "s|^MODEL_NAME=.*|MODEL_NAME=\"${model}\"|" \
         -e "s|^THINKING_BUDGET=.*|THINKING_BUDGET=${budget}|" \
         -e "s|^ENABLE_WAIT_INSERTION=.*|ENABLE_WAIT_INSERTION=${ENABLE_WAIT_INSERTION}|" \
+        -e "s|^ADD_DOC_FOR_RAGTRANS=.*|ADD_DOC_FOR_RAGTRANS=${ADD_DOC_FOR_RAGTRANS}|" \
         "$TEMPLATE" >"$tmp_script"
 
       chmod +x "$tmp_script"

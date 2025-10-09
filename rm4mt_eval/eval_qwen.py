@@ -156,6 +156,7 @@ def translate_dataset(
     seed,
     device_map,
     enable_wait_insertion,
+    add_doc_for_ragtrans,
 ):
     """
     Translate dataset using local model inference
@@ -221,9 +222,13 @@ def translate_dataset(
                 src_lang_name = LANG_CODE_TO_NAME[src_lang]
                 tgt_lang_name = LANG_CODE_TO_NAME[tgt_lang]
                 if task == "RAGtrans":
-                    sys_prompt = f"You are a professional translator, and your task is to translate an given input sentence from {src_lang_name} to {tgt_lang_name}. In addition to the input sentence, you will be provided with a document that may contain relevant information to aid in the translation. However, be aware that some documents may contain irrelevant or noisy information."
-                    doc = item.get("doc", "")
-                    prompt = f"<document>\n{doc}\n<document>\nTranslate the following text from {src_lang_name} to {tgt_lang_name}\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
+                    if add_doc_for_ragtrans:
+                        sys_prompt = f"You are a professional translator, and your task is to translate an given input sentence from {src_lang_name} to {tgt_lang_name}. In addition to the input sentence, you will be provided with a document that may contain relevant information to aid in the translation. However, be aware that some documents may contain irrelevant or noisy information."
+                        doc = item.get("doc", "")
+                        prompt = f"<document>\n{doc}\n<document>\nTranslate the following text from {src_lang_name} to {tgt_lang_name}\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
+                    else:
+                        sys_prompt = f"You are a professional translator, and your task is to translate an given input sentence from {src_lang_name} to {tgt_lang_name}."
+                        prompt = f"Translate the following text from {src_lang_name} to {tgt_lang_name}\n{src_lang_name}: {src_text}\n{tgt_lang_name}: "
                     messages = [
                         {"role": "system", "content": sys_prompt},
                         {"role": "user", "content": prompt},
@@ -345,6 +350,11 @@ if __name__ == "__main__":
         help="Enable wait insertion for longer thinking",
     )
     parser.add_argument(
+        "--add_doc_for_ragtrans",
+        action="store_true",
+        help="Add document for RAGtrans",
+    )
+    parser.add_argument(
         "--device_map",
         type=str,
         default=None,
@@ -378,6 +388,7 @@ if __name__ == "__main__":
     print(f"  Max new tokens: {args.max_new_tokens}")
     print(f"  Thinking budget: {args.thinking_budget}")
     print(f"  enable_wait_insertion: {args.enable_wait_insertion}")
+    print(f"  add_doc_for_ragtrans: {args.add_doc_for_ragtrans}")
     print(f"  Device map: {args.device_map}")
     print(f"  Seed: {args.seed}")
     print()
@@ -393,4 +404,5 @@ if __name__ == "__main__":
         seed=args.seed,
         device_map=args.device_map,
         enable_wait_insertion=args.enable_wait_insertion,
+        add_doc_for_ragtrans=args.add_doc_for_ragtrans,
     )
