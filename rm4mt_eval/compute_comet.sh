@@ -48,6 +48,7 @@ DATASETS=(
   # "CommonsenseMT-Lexical"
   # "RTT"
   # "RAGtrans"
+  # "RAGtrans_without_doc"
 )
 
 for DATASET in "${DATASETS[@]}"; do
