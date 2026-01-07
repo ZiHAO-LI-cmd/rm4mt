@@ -1,0 +1,15 @@
+[project]
+name = "rm4mt"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "gspread>=6.2.1",
+    "gspread-dataframe>=4.0.0",
+    "ipykernel>=7.1.0",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.0",
+    "pandas>=2.3.3",
+]
