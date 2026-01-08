@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=eval
-#SBATCH --output=/scratch/project_462000941/members/zihao/rm4mt/logs/eval_local/%x_%j.out
-#SBATCH --error=/scratch/project_462000941/members/zihao/rm4mt/logs/eval_local/%x_%j.err
+#SBATCH --output=../logs/eval_local/%x_%j.out
+#SBATCH --error=../logs/eval_local/%x_%j.err
 #SBATCH --partition=small-g
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -12,9 +12,7 @@
 start_time=$(date +%s)
 echo "Job started at: $(date)"
 
-module use /appl/local/csc/modulefiles/
-module load pytorch/2.5
-source /flash/project_462000941/venv/rm4mt_env/bin/activate
+source ../.venv/bin/activate
 
 INPUT_DIR=""
 MODEL_NAME=""
@@ -27,12 +25,12 @@ DATASET_NAME=$(basename "$INPUT_DIR")
 
 if [ "$ENABLE_WAIT_INSERTION" = "False" ]; then
     if [ "$DATASET_NAME" == "RAGtrans" ] && [ "$ADD_DOC_FOR_RAGTRANS" = "False" ]; then
-        OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}_without_doc/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
+        OUTPUT_DIR="../rm4mt_translated/${DATASET_NAME}_without_doc/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
     else
-        OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
+        OUTPUT_DIR="../rm4mt_translated/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
     fi
 else
-    OUTPUT_DIR="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
+    OUTPUT_DIR="../rm4mt_wait_translated/${DATASET_NAME}/$(basename ${MODEL_NAME})/budget_${THINKING_BUDGET}"
 fi
 
 SCRIPT="eval_cogito.py"

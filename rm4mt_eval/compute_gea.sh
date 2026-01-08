@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=GEA-MULTI
-#SBATCH --output=/scratch/project_462000941/members/zihao/rm4mt/logs/gea/%x_%j.out
-#SBATCH --error=/scratch/project_462000941/members/zihao/rm4mt/logs/gea/%x_%j.err
+#SBATCH --output=../logs/gea/%x_%j.out
+#SBATCH --error=../logs/gea/%x_%j.err
 #SBATCH --partition=small
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -13,22 +13,12 @@
 start_time=$(date +%s)
 echo "Job started at: $(date)"
 
-source /users/lizihao1/miniconda3/etc/profile.d/conda.sh
-conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
+source ../.venv/bin/activate
 
 SCRIPT="compute_gea.py"
 
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_gea"
-
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_gea"
-
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_with_gea"
-
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score_with_gea"
+# INPUT_BASE=""
+# OUTPUT_BASE=""
 
 MAX_WORKERS=5
 BATCH_SIZE=100

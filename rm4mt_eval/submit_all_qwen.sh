@@ -61,7 +61,7 @@ for dataset in "${DATASETS[@]}"; do
       sed \
         -e "s|^#SBATCH --job-name=.*|#SBATCH --job-name=${jobname}|" \
         -e "s|^#SBATCH --gpus-per-task=.*|#SBATCH --gpus-per-task=${GPUS_PER_TASK}|" \
-        -e "s|^INPUT_DIR=.*|INPUT_DIR=\"/scratch/project_462000941/members/zihao/rm4mt/rm4mt_dataset/processed/${dataset}\"|" \
+        -e "s|^INPUT_DIR=.*|INPUT_DIR=\"../rm4mt_dataset/processed/${dataset}\"|" \
         -e "s|^MODEL_NAME=.*|MODEL_NAME=\"${model}\"|" \
         -e "s|^THINKING_BUDGET=.*|THINKING_BUDGET=${budget}|" \
         -e "s|^ENABLE_WAIT_INSERTION=.*|ENABLE_WAIT_INSERTION=${ENABLE_WAIT_INSERTION}|" \

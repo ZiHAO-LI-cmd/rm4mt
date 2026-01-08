@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=eval
-#SBATCH --output=/scratch/project_462000941/members/zihao/rm4mt/logs/eval_api/%x_%j.out
-#SBATCH --error=/scratch/project_462000941/members/zihao/rm4mt/logs/eval_api/%x_%j.err
+#SBATCH --output=../logs/eval_api/%x_%j.out
+#SBATCH --error=../logs/eval_api/%x_%j.err
 #SBATCH --partition=small
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -13,8 +13,7 @@
 start_time=$(date +%s)
 echo "Job started at: $(date)"
 
-source /users/lizihao1/miniconda3/etc/profile.d/conda.sh
-conda activate /scratch/project_462000941/members/zihao/env/rm4mt_env
+source ../.venv/bin/activate
 
 INPUT_DIR=""
 MODEL_NAME=""

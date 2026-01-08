@@ -1,7 +1,6 @@
 /rm4mt_dataset
 /rm4mt_translated
 /rm4mt_wait_translated
-/rm4mt_translated_4_test
 /rm4mt_translated_with_comet
 /rm4mt_translated_with_grb_grf
 /rm4mt_translated_with_gea
@@ -28,3 +27,6 @@
 /rm4mt_eval/analysis/*.pdf
 /rm4mt_eval/analysis/*.png
 /rm4mt_eval/analysis/*.drawio
+/rm4mt_dataset_process
+/rm4mt_dataset_statistic
+/rm4mt_eval/analysis

@@ -41,7 +41,7 @@ for dataset in "${DATASETS[@]}"; do
 
       sed \
         -e "s|^#SBATCH --job-name=.*|#SBATCH --job-name=${jobname}|" \
-        -e "s|^INPUT_DIR=.*|INPUT_DIR=\"/scratch/project_462000941/members/zihao/rm4mt/rm4mt_dataset/processed/${dataset}\"|" \
+        -e "s|^INPUT_DIR=.*|INPUT_DIR=\"../rm4mt_dataset/processed/${dataset}\"|" \
         -e "s|^MODEL_NAME=.*|MODEL_NAME=\"${model}\"|" \
         -e "s|^REASONING_EFFORT=.*|REASONING_EFFORT=\"${reasoning_effort}\"|" \
         "$TEMPLATE" > "$tmp_script"

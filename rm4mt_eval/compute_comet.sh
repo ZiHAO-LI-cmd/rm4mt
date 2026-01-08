@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=COMET-MULTI
-#SBATCH --output=/scratch/project_462000941/members/zihao/rm4mt/logs/comet/%x_%j.out
-#SBATCH --error=/scratch/project_462000941/members/zihao/rm4mt/logs/comet/%x_%j.err
+#SBATCH --output=../logs/comet/%x_%j.out
+#SBATCH --error=../logs/comet/%x_%j.err
 #SBATCH --partition=small-g
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -12,23 +12,12 @@
 start_time=$(date +%s)
 echo "Job started at: $(date)"
 
-module use /appl/local/csc/modulefiles/
-module load pytorch/2.5
-source /flash/project_462000941/venv/rm4mt_env/bin/activate
+source ../.venv/bin/activate
 
 SCRIPT="compute_comet.py"
 
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_translated_with_comet"
-
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/rm4mt_wait_translated_with_comet"
-
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_with_comet"
-
-# INPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score"
-# OUTPUT_BASE="/scratch/project_462000941/members/zihao/rm4mt/post_edited_without_quality_score_with_comet"
+# INPUT_BASE=""
+# OUTPUT_BASE=""
 
 OVERWRITE=false
 
