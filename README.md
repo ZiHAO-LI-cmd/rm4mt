@@ -104,11 +104,24 @@ bash compute_grb_grf.sh
 If you find this work useful, please cite our paper:
 
 ```bibtex
-@inproceedings{li2026tts-mt,
-  title={Test-Time Scaling of Reasoning Models for Machine Translation},
-  author={Li, Zihao and Ji, Shaoxiong and Tiedemann, J{\"o}rg},
-  booktitle={Proceedings of the 2026 Conference of the European Chapter of the Association for Computational Linguistics},
-  year={2026}
+@inproceedings{li-etal-2026-test,
+    title = "Test-Time Scaling of Reasoning Models for Machine Translation",
+    author = {Li, Zihao  and
+      Ji, Shaoxiong  and
+      Tiedemann, J{\"o}rg},
+    editor = "Demberg, Vera  and
+      Inui, Kentaro  and
+      Marquez, Llu{\'i}s",
+    booktitle = "Proceedings of the 19th Conference of the {E}uropean Chapter of the {A}ssociation for {C}omputational {L}inguistics (Volume 1: Long Papers)",
+    month = mar,
+    year = "2026",
+    address = "Rabat, Morocco",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.eacl-long.133/",
+    doi = "10.18653/v1/2026.eacl-long.133",
+    pages = "2902--2917",
+    ISBN = "979-8-89176-380-7",
+    abstract = "Test-time scaling (TTS) has enhanced the performance of Reasoning Models (RMs) on various tasks such as math and coding, yet its efficacy in machine translation (MT) remains underexplored. This paper investigates whether increased inference-time computation improves translation quality. We evaluate 12 RMs across a diverse suite of MT benchmarks spanning multiple domains, examining three scenarios: direct translation, forced-reasoning extrapolation, and post-editing. Our findings show that for general-purpose RMs, TTS provides limited and inconsistent benefits for direct translation, with performance quickly plateauing. However, the effectiveness of TTS is unlocked by domain-specific fine-tuning, which aligns a model{'}s reasoning process with task requirements, leading to consistent improvements up to an optimal, self-determined reasoning depth. We also find that forcing a model to reason beyond its natural stopping point consistently degrades translation quality. In contrast, TTS proves highly effective in a post-editing context, reliably turning self-correction into a beneficial process. These results indicate that the value of inference-time computation in MT lies not in enhancing single-pass translation with general models, but in targeted applications like multi-step, self-correction workflows and in conjunction with task-specialized models."
 }
 ```
 
